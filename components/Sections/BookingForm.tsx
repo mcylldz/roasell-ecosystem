@@ -151,7 +151,7 @@ const BookingForm: React.FC = () => {
     }
 
     // Redirect to Calendly for other budgets
-    const calendlyUrl = new URL('https://calendly.com/roasell/roasell-yol-haritasi');
+    const calendlyUrl = new URL('https://calendly.com/roasell/roasell-analiz-gorusmesi');
     calendlyUrl.searchParams.set('utm_source', utmSource);
     calendlyUrl.searchParams.set('utm_medium', utmMedium);
     calendlyUrl.searchParams.set('utm_campaign', utmCampaign);
