@@ -20,34 +20,7 @@
 
   <!-- Importmap removed (using Vite bundling) -->
 
-  <!-- Facebook Pixel Code -->
-  <script>
-    !function (f, b, e, v, n, t, s) {
-      if (f.fbq) return; n = f.fbq = function () {
-        n.callMethod ?
-        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-      };
-      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
-      n.queue = []; t = b.createElement(e); t.async = !0;
-      t.src = v; s = b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t, s)
-    }(window, document, 'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-
-    fbq('init', '170135295273206');
-    fbq('track', 'PageView');
-
-    // fbp ve fbc değerlerini almak için özel kod:
-    fbq('trackCustom', 'GenerateFBPAndFBC', {}, {
-      external_id: function () {
-        const fbp = `_fbp=${document.cookie.split('; ').find(row => row.startsWith('_fbp=')) || ''}`;
-        const fbc = `_fbc=${document.cookie.split('; ').find(row => row.startsWith('_fbc=')) || ''}`;
-        console.log('FBP:', fbp);
-        console.log('FBC:', fbc);
-      }
-    });
-  </script>
-  <!-- End Facebook Pixel Code -->
+  <!-- Facebook Pixel Code - moved to end of body for performance -->
 </head>
 
 <body>
@@ -74,6 +47,27 @@
     <div><img src="https://mc.yandex.ru/watch/98750512" style="position:absolute; left:-9999px;" alt="" /></div>
   </noscript>
   <!-- /Yandex.Metrika counter -->
+
+  <!-- Facebook Pixel Code - Deferred for performance -->
+  <script>
+    window.addEventListener('load', function () {
+      !function (f, b, e, v, n, t, s) {
+        if (f.fbq) return; n = f.fbq = function () {
+          n.callMethod ?
+            n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+        };
+        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+        n.queue = []; t = b.createElement(e); t.async = !0;
+        t.src = v; s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s)
+      }(window, document, 'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+
+      fbq('init', '170135295273206');
+      fbq('track', 'PageView');
+    });
+  </script>
+  <!-- End Facebook Pixel Code -->
 </body>
 
 </html>
