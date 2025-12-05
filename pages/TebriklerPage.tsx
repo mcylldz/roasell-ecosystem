@@ -1,15 +1,114 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Play } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import VideoLite from '../components/ui/VideoLite';
+import Header from '../components/Sections/Header';
 
 const TebriklerPage: React.FC = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
+
+        // Facebook Pixel Code
+        (function (f: any, b: any, e: string, v: string, n: any, t: any, s: any) {
+            if (f.fbq) return;
+            n = f.fbq = function () {
+                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s);
+        })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js', null, null, null);
+
+        // @ts-ignore
+        window.fbq('init', '170135295273206');
+        // @ts-ignore
+        window.fbq('track', 'PageView');
+
+        // fbp ve fbc değerlerini almak için özel kod
+        // @ts-ignore
+        window.fbq('trackCustom', 'GenerateFBPAndFBC', {}, {
+            external_id: function () {
+                const fbp = `_fbp=${document.cookie.split('; ').find((row: string) => row.startsWith('_fbp=')) || ''}`;
+                const fbc = `_fbc=${document.cookie.split('; ').find((row: string) => row.startsWith('_fbc=')) || ''}`;
+                console.log('FBP:', fbp);
+                console.log('FBC:', fbc);
+            }
+        });
+
+        // Footer tracking code
+        const getCookie = (name: string) => {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+
+        const sendTrackingData = async () => {
+            try {
+                const fbp = getCookie('_fbp');
+                const fbc = getCookie('_fbc');
+                const user_agent = navigator.userAgent;
+                const timestamp = Math.floor(Date.now() / 1000);
+                const event_id = fbp;
+
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                const ip_address = ipData.ip;
+
+                // Facebook Pixel olayını tetikle
+                // @ts-ignore
+                window.fbq('track', 'Meeting', {
+                    fbp: fbp,
+                    fbc: fbc,
+                    user_agent: user_agent,
+                    ip_address: ip_address,
+                    timestamp: timestamp,
+                    event_id: event_id
+                });
+
+                const response = await fetch('https://enigmatic-shore-65981-13bb9dda0198.herokuapp.com/sendToZapier', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fbp: fbp,
+                        fbc: fbc,
+                        user_agent: user_agent,
+                        ip: ip_address,
+                        timestamp: 'Meeting'
+                    })
+                });
+                const json = await response.json();
+                console.log('Data sent to Zapier:', json);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        sendTrackingData();
     }, []);
 
     return (
         <div className="min-h-screen bg-roasell-black text-white">
+            {/* Header */}
+            <Header />
+
             {/* Background Effects */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[500px] bg-roasell-gold/5 rounded-full blur-[100px] pointer-events-none" />
 
