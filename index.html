@@ -21,16 +21,32 @@
       rel="stylesheet">
   </noscript>
 
-  <!-- Tailwind CSS & Config removed (using build-time) -->
+  <!-- Meta Pixel base -->
+  <link rel="preconnect" href="https://connect.facebook.net">
+  <script>
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ?
+          n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      }; if (!f._fbq) f._fbq = n;
+      n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0;
+      t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s)
+    }
+      (window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-  <!-- Custom Styles removed (moved to index.css) -->
+    fbq('init', '170135295273206');
+    /* Buradaki track('PageView') KALDIRILDI — eventID'li çağrı body'de yapılacak */
+  </script>
 
-  <!-- Importmap removed (using Vite bundling) -->
 
-  <!-- Facebook Pixel Code - moved to end of body for performance -->
 </head>
 
 <body>
+  <noscript>
+    <!-- JS kapalıysa en az bir PageView gitsin -->
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=170135295273206&ev=PageView&noscript=1" />
+  </noscript>
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
   <!-- Yandex.Metrika counter -->
@@ -55,24 +71,78 @@
   </noscript>
   <!-- /Yandex.Metrika counter -->
 
-  <!-- Facebook Pixel Code - Deferred for performance -->
+  <!-- Facebook Pixel Code & Advanced Tracking -->
   <script>
-    window.addEventListener('load', function () {
-      !function (f, b, e, v, n, t, s) {
-        if (f.fbq) return; n = f.fbq = function () {
-          n.callMethod ?
-            n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-        };
-        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
-        n.queue = []; t = b.createElement(e); t.async = !0;
-        t.src = v; s = b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t, s)
-      }(window, document, 'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
+    (function () {
+      const WEBHOOK = 'https://dtt1z7t3.rcsrv.com/webhook/meeting';
+      const EVENT = 'PageView';
 
-      fbq('init', '170135295273206');
-      fbq('track', 'PageView');
-    });
+      function getCookie(name) {
+        const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.*+?^${}()|[\]\\])/g, '\\$1') + '=([^;]*)'));
+        return m ? decodeURIComponent(m[1]) : null;
+      }
+      function getParam(k) { return new URLSearchParams(location.search).get(k); }
+      function uuidv4() {
+        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+      }
+      function computeFBC() {
+        const c = getCookie('_fbc'); if (c) return c;
+        const fbclid = getParam('fbclid'); if (!fbclid) return null;
+        return `fb.1.${Math.floor(Date.now() / 1000)}.${fbclid}`;
+      }
+      function computeFBP() { return getCookie('_fbp') || null; }
+
+      // Tek sefer guard
+      if (window.__PV_SENT__) return; window.__PV_SENT__ = true;
+
+      const event_id = uuidv4();
+      const event_time = Math.floor(Date.now() / 1000);
+      const fbp = computeFBP() || '';
+      const fbc = computeFBC() || '';
+      const user_agent = navigator.userAgent || '';
+
+      // 1) Browser Pixel - Standart event + eventID (dedup için kritik)
+      try { fbq('track', EVENT, {}, { eventID: event_id }); } catch (e) { }
+
+      // 2) Server’a image GET (CORS yok)
+      (function imageSend() {
+        const q = new URLSearchParams({
+          transport: 'img',
+          event_name: EVENT,
+          event_id,
+          event_time: String(event_time),
+          fbp, fbc,
+          ua: user_agent,
+          url: location.href,
+          ref: document.referrer || ''
+        }).toString();
+        const img = new Image();
+        img.src = WEBHOOK + '?' + q;
+      })();
+
+      // 3) sendBeacon (varsa) — ekstra garanti
+      (function beaconSend() {
+        if (!navigator.sendBeacon) return;
+        try {
+          const payload = {
+            transport: 'beacon',
+            event_name: EVENT,
+            event_id,
+            event_time,
+            fbp, fbc, user_agent,
+            ip_address: null,
+            page: { url: location.href, referrer: document.referrer }
+          };
+          navigator.sendBeacon(
+            WEBHOOK,
+            new Blob([JSON.stringify(payload)], { type: 'application/json' })
+          );
+        } catch (e) { }
+      })();
+
+      // Debug
+      console.table({ event_id, event_time, fbp, fbc, user_agent, url: location.href });
+    })();
   </script>
   <!-- End Facebook Pixel Code -->
 </body>

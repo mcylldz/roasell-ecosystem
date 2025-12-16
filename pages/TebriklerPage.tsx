@@ -8,100 +8,99 @@ const TebriklerPage: React.FC = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
 
-        // Facebook Pixel Code
-        (function (f: any, b: any, e: string, v: string, n: any, t: any, s: any) {
-            if (f.fbq) return;
-            n = f.fbq = function () {
-                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-            };
-            if (!f._fbq) f._fbq = n;
-            n.push = n;
-            n.loaded = !0;
-            n.version = '2.0';
-            n.queue = [];
-            t = b.createElement(e);
-            t.async = !0;
-            t.src = v;
-            s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s);
-        })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js', null, null, null);
+        // --- HEADER CODE (Pixel Base + PageView) ---
+        // @ts-ignore
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+        (window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
 
         // @ts-ignore
-        window.fbq('init', '170135295273206');
+        fbq('init', '170135295273206');
         // @ts-ignore
-        window.fbq('track', 'PageView');
+        fbq('track', 'PageView');
 
-        // fbp ve fbc değerlerini almak için özel kod
-        // @ts-ignore
-        window.fbq('trackCustom', 'GenerateFBPAndFBC', {}, {
-            external_id: function () {
-                const fbp = `_fbp=${document.cookie.split('; ').find((row: string) => row.startsWith('_fbp=')) || ''}`;
-                const fbc = `_fbc=${document.cookie.split('; ').find((row: string) => row.startsWith('_fbc=')) || ''}`;
-                console.log('FBP:', fbp);
-                console.log('FBC:', fbc);
+        // --- FOOTER CODE (Meeting Event + Webhook) ---
+        (function(){
+            // === AYARLAR ===
+            const WEBHOOK = 'https://dtt1z7t3.rcsrv.com/webhook/meeting';
+            const EVENT   = 'Meeting'; // bu flow için event adı
+            const GUARD_KEY = '__MT_SENT_SubmitApplication'; // event'e özel guard
+
+            // === YARDIMCILAR ===
+            function getCookie(name: string){
+                const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.*+?^${}()|[\]\\])/g,'\\$1') + '=([^;]*)'));
+                return m ? decodeURIComponent(m[1]) : null;
             }
-        });
-
-        // Footer tracking code
-        const getCookie = (name: string) => {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
+            function getParam(k: string){ return new URLSearchParams(location.search).get(k); }
+            function uuidv4(){
+                return ((1e7 as any)+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,(c: any)=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
             }
-            return cookieValue;
-        };
-
-        const sendTrackingData = async () => {
-            try {
-                const fbp = getCookie('_fbp');
-                const fbc = getCookie('_fbc');
-                const user_agent = navigator.userAgent;
-                const timestamp = Math.floor(Date.now() / 1000);
-                const event_id = fbp;
-
-                const ipResponse = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipResponse.json();
-                const ip_address = ipData.ip;
-
-                // Facebook Pixel olayını tetikle
-                // @ts-ignore
-                window.fbq('track', 'Meeting', {
-                    fbp: fbp,
-                    fbc: fbc,
-                    user_agent: user_agent,
-                    ip_address: ip_address,
-                    timestamp: timestamp,
-                    event_id: event_id
-                });
-
-                const response = await fetch('https://enigmatic-shore-65981-13bb9dda0198.herokuapp.com/sendToZapier', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        fbp: fbp,
-                        fbc: fbc,
-                        user_agent: user_agent,
-                        ip: ip_address,
-                        timestamp: 'Meeting'
-                    })
-                });
-                const json = await response.json();
-                console.log('Data sent to Zapier:', json);
-            } catch (error) {
-                console.error('Error:', error);
+            function computeFBC(){
+                const c = getCookie('_fbc'); if (c) return c;
+                const fbclid = getParam('fbclid'); if (!fbclid) return null;
+                return `fb.1.${Math.floor(Date.now()/1000)}.${fbclid}`;
             }
-        };
+            function computeFBP(){ return getCookie('_fbp') || null; }
 
-        sendTrackingData();
+            // === TEK SEFER GUARD (event'e özgü) ===
+            // @ts-ignore
+            if (window[GUARD_KEY]) return;
+            // @ts-ignore
+            window[GUARD_KEY] = true;
+
+            // === PAYLOAD HAZIRLA ===
+            const event_id   = uuidv4();
+            const event_time = Math.floor(Date.now()/1000);
+            const fbp        = computeFBP();
+            const fbc        = computeFBC();
+            const user_agent = navigator.userAgent || null;
+
+            // 1) PIXEL (dedup için eventID aynı)
+            // @ts-ignore
+            try { fbq('trackCustom', EVENT, {}, { eventID: event_id }); } catch(e){}
+
+            // 2) IMG GET (CORS'suz, garanti)
+            (function imageSend(){
+                const q = new URLSearchParams({
+                    transport: 'img',
+                    event_name: EVENT,
+                    event_id,
+                    event_time: String(event_time),
+                    fbp: fbp || '',
+                    fbc: fbc || '',
+                    ua: user_agent || '',
+                    url: location.href,
+                    ref: document.referrer || ''
+                }).toString();
+                const img = new Image();
+                img.src = WEBHOOK + '?' + q;
+            })();
+
+            // 3) sendBeacon (varsa, ek log)
+            (function beaconSend(){
+                if (!navigator.sendBeacon) return;
+                try {
+                    const payload = {
+                        transport: 'beacon',
+                        event_name: EVENT,
+                        event_id,
+                        event_time,
+                        fbp, fbc, user_agent,
+                        ip_address: null,
+                        page: { url: location.href, referrer: document.referrer }
+                    };
+                    navigator.sendBeacon(
+                        WEBHOOK,
+                        new Blob([JSON.stringify(payload)], { type: 'application/json' })
+                    );
+                } catch(e){}
+            })();
+
+            // DEBUG
+            console.table({ event_name: EVENT, event_id, event_time, fbp, fbc, user_agent, url: location.href });
+        })();
     }, []);
 
     return (
