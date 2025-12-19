@@ -22,7 +22,7 @@ const TebriklerPage: React.FC = () => {
             }
             function getParam(k: string) { return new URLSearchParams(location.search).get(k); }
             function uuidv4() {
-                return ([1e7] as any + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c: any) =>
+                return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c: any) =>
                     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
                 );
             }
@@ -56,18 +56,20 @@ const TebriklerPage: React.FC = () => {
             }
 
             // 2) IMG GET (CORS'suz, garanti)
+            const queryData = {
+                transport: 'img',
+                event_name: EVENT,
+                event_id,
+                event_time: String(event_time),
+                fbp: fbp || '',
+                fbc: fbc || '',
+                ua: user_agent || '',
+                url: location.href,
+                ref: document.referrer || ''
+            };
+
             (function imageSend() {
-                const q = new URLSearchParams({
-                    transport: 'img',
-                    event_name: EVENT,
-                    event_id,
-                    event_time: String(event_time),
-                    fbp: fbp || '',
-                    fbc: fbc || '',
-                    ua: user_agent || '',
-                    url: location.href,
-                    ref: document.referrer || ''
-                }).toString();
+                const q = new URLSearchParams(queryData).toString();
                 const img = new Image();
                 img.src = WEBHOOK + '?' + q;
             })();
@@ -77,17 +79,14 @@ const TebriklerPage: React.FC = () => {
                 if (!navigator.sendBeacon) return;
                 try {
                     const payload = {
+                        ...queryData,
                         transport: 'beacon',
-                        event_name: EVENT,
-                        event_id,
-                        event_time,
-                        fbp, fbc, user_agent,
                         ip_address: null,
-                        page: { url: location.href, referrer: document.referrer }
                     };
-                    // text/plain kullanarak preflight (CORS) engelinden kaçınıyoruz
+                    // Hem URL'e hem gövdeye ekliyoruz (maksimum uyumluluk)
+                    const q = new URLSearchParams({ event_id, event_name: EVENT }).toString();
                     navigator.sendBeacon(
-                        WEBHOOK,
+                        WEBHOOK + '?' + q,
                         new Blob([JSON.stringify(payload)], { type: 'text/plain' })
                     );
                 } catch (e) { }
