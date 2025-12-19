@@ -133,9 +133,10 @@
             ip_address: null,
             page: { url: location.href, referrer: document.referrer }
           };
+          // text/plain kullanarak preflight (CORS) engelinden kaçınıyoruz
           navigator.sendBeacon(
             WEBHOOK,
-            new Blob([JSON.stringify(payload)], { type: 'application/json' })
+            new Blob([JSON.stringify(payload)], { type: 'text/plain' })
           );
         } catch (e) { }
       })();
