@@ -36,8 +36,9 @@ const Hero: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-3 leading-tight tracking-tight font-display max-w-5xl"
         >
-          <span className="text-gradient-gold block font-extrabold">E-ticaret Mentörlük Programı</span>
-          <span className="text-white relative z-10"> Başvurusu</span>
+          <span className="text-gradient-gold block font-extrabold">E-ticaret</span>
+          <span className="text-gradient-gold block font-extrabold">Mentörlük Programı</span>
+          <span className="text-white block relative z-10">Başvurusu</span>
         </motion.h1>
 
         {/* Kontenjan Sayacı */}
