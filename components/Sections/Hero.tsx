@@ -36,9 +36,20 @@ const Hero: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-3 leading-tight tracking-tight font-display max-w-5xl"
         >
-          <span className="text-gradient-gold block md:inline font-extrabold">+200.000.000₺</span>
-          <span className="text-white relative z-10"> Hacime Ortak Ol</span>
+          <span className="text-gradient-gold block font-extrabold">E-ticaret Mentörlük Programı</span>
+          <span className="text-white relative z-10"> Başvurusu</span>
         </motion.h1>
+
+        {/* Kontenjan Sayacı */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="mb-2 md:mb-3 flex flex-col items-center"
+        >
+          <span className="text-xs md:text-sm text-gray-400 font-medium">Kontenjan için kalan son;</span>
+          <span className="text-2xl md:text-3xl font-extrabold text-roasell-gold mt-1">19<span className="text-gray-500">/20</span></span>
+        </motion.div>
 
         {/* Description */}
         <motion.p
@@ -84,10 +95,7 @@ const Hero: React.FC = () => {
         <div className="flex flex-col items-center gap-3 w-full max-w-md mx-auto relative z-20 mt-2">
           <div className="group w-full px-4 md:px-0">
             <Button variant="primary" size="lg" withArrow onClick={scrollToBooking} className="w-full shadow-roasell-gold/20 py-3 font-bold uppercase">
-              <div className="flex flex-col items-center leading-tight">
-                <span className="text-sm md:text-base">ÜCRETSİZ ANALİZ</span>
-                <span className="text-xs md:text-sm">RANDEVUSU AL</span>
-              </div>
+              <span className="text-sm md:text-base font-bold">KONTENJANA BAŞVUR</span>
             </Button>
           </div>
         </div>

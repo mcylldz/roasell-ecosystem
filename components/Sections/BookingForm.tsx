@@ -179,7 +179,7 @@ const BookingForm: React.FC = () => {
             onClick={handleStart}
             className="bg-black text-white border border-white/20 px-6 py-3 rounded-lg font-bold text-base md:text-lg tracking-wider shadow-2xl hover:border-roasell-gold/50 hover:shadow-roasell-gold/20 transition-all group flex items-center gap-3"
           >
-            RANDEVU ALMAYA HAZIRIM
+            KONTENJANA BAŞVUR
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </motion.button>
         </div>

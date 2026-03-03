@@ -24,7 +24,7 @@ const FinalCTA: React.FC = () => {
           </p>
 
           <Button variant="primary" size="lg" withArrow onClick={scrollToBooking} className="text-sm md:text-base px-8 py-3.5 mb-4 md:mb-6 w-full md:w-auto font-bold">
-            1-1 Randevu Al
+            Kontenjana Başvur
           </Button>
 
           <div className="flex flex-wrap justify-center gap-3 md:gap-4 text-[10px] md:text-xs text-gray-500">
