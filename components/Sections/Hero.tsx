@@ -49,7 +49,7 @@ const Hero: React.FC = () => {
           className="mb-2 md:mb-3 flex flex-col items-center"
         >
           <span className="text-xs md:text-sm text-gray-400 font-medium">Kontenjan için kalan son;</span>
-          <span className="text-2xl md:text-3xl font-extrabold text-roasell-gold mt-1">19<span className="text-gray-500">/20</span></span>
+          <span className="text-2xl md:text-3xl font-extrabold text-roasell-gold mt-1">12<span className="text-gray-500">/20</span></span>
         </motion.div>
 
         {/* Description */}
