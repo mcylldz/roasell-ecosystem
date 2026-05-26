@@ -41,17 +41,6 @@ const Hero: React.FC = () => {
           <span className="text-white block relative z-10">Başvurusu</span>
         </motion.h1>
 
-        {/* Kontenjan Sayacı */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="mb-2 md:mb-3 flex flex-col items-center"
-        >
-          <span className="text-xs md:text-sm text-gray-400 font-medium">Kontenjan için kalan son;</span>
-          <span className="text-2xl md:text-3xl font-extrabold text-roasell-gold mt-1">12<span className="text-gray-500">/20</span></span>
-        </motion.div>
-
         {/* Description */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -96,7 +85,7 @@ const Hero: React.FC = () => {
         <div className="flex flex-col items-center gap-3 w-full max-w-md mx-auto relative z-20 mt-2">
           <div className="group w-full px-4 md:px-0">
             <Button variant="primary" size="lg" withArrow onClick={scrollToBooking} className="w-full shadow-roasell-gold/20 py-3 font-bold uppercase">
-              <span className="text-sm md:text-base font-bold">KONTENJANA BAŞVUR</span>
+              <span className="text-sm md:text-base font-bold">RANDEVU AL</span>
             </Button>
           </div>
         </div>
