@@ -118,6 +118,8 @@
   .section-head p { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6; }
   .gold { color: var(--gold); }
   em.gold { font-style: normal; color: var(--gold); }
+  .calc-disclaimer { font-style: italic; color: var(--text-muted); font-size: 0.88rem; margin-top: 14px; line-height: 1.5; }
+  .hl-gold { color: var(--gold); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
 
   /* Hero */
   .hero {
@@ -314,7 +316,6 @@
     border: 1px solid var(--border); border-radius: 12px;
     overflow: hidden;
   }
-  .yayin-strip.yayin-strip-single { grid-template-columns: 1fr; max-width: 280px; }
   .yayin-strip-item { padding: 22px; text-align: center; border-right: 1px solid var(--border); }
   .yayin-strip-item:last-child { border-right: 0; }
   .yayin-strip-item .num { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; color: var(--gold); line-height: 1.1; }
@@ -574,7 +575,7 @@
 <!-- 2. HERO -->
 <section class="hero">
   <div class="container">
-    <h1 class="reveal">Başarısız Denemeler Artık <em class="gold">Geride Kalsın</em></h1>
+    <h1 class="reveal">Bahaneler Artık <em class="gold">Geride Kalsın</em></h1>
     <p class="sub reveal reveal-delay-1">8 yıldır Türkiye, Avrupa ve Amerika'da markalar kuruyoruz. Şimdi bu deneyimi <span style="color:var(--text-primary);font-weight:500;">RoaSell Ekosistemi</span> ile seninle paylaşıyoruz.</p>
     <a href="https://calendly.com/PLACEHOLDER" class="btn btn-primary reveal reveal-delay-2">Ücretsiz Randevu Al →</a>
   </div>
@@ -648,6 +649,7 @@
     <div class="section-head reveal">
       <span class="eyebrow">Kendi Rakamlarını Gör</span>
       <h2>Hedeflediğin Kâra Ulaşmak İçin Ne Gerekiyor?</h2>
+      <p class="calc-disclaimer">Yapacağınız hesap RoaSell ekosistemine bağlı olan ortalama 1 mağazanın ortalama sonuçlarına göre hesaplanmaktadır.</p>
     </div>
     <div class="calc reveal">
       <label class="calc-label" for="calc-input">Aylık Kâr Hedefin (₺)</label>
@@ -717,10 +719,7 @@
   <div class="container">
     <div class="section-head reveal">
       <span class="eyebrow">Kurs Değil, Canlı Destek</span>
-      <h2>Her Ay 60+ Saat Canlı Eğitim</h2>
-    </div>
-    <div class="yayin-strip reveal yayin-strip-single">
-      <div class="yayin-strip-item"><div class="num">60+</div><div class="lbl">Saat / Ay</div></div>
+      <h2>Her Ay <span class="hl-gold">60+ Saat Canlı Eğitim</span></h2>
     </div>
     <div class="yayin-table-wrap reveal">
       <table class="yayin-table">
