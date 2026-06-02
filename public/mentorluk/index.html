@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="RoaSell — Shopify e-ticaret ve dropshipping mentörlük programı." />
+<title>RoaSell — E-ticaret Mentörlük Programı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #0f0f0f;
+    --bg-card: #141414;
+    --bg-card-hover: #181818;
+    --gold: #c9a84c;
+    --gold-light: #e8d48b;
+    --gold-dark: #a07c2a;
+    --text-primary: #eeeeee;
+    --text-secondary: #888888;
+    --text-muted: #555555;
+    --accent-glow: rgba(201, 168, 76, 0.1);
+    --border: rgba(255, 255, 255, 0.06);
+    --font-display: 'DM Sans', system-ui, sans-serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  img { display: block; max-width: 100%; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+
+  .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* Reveal */
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1.visible { transition-delay: .1s; }
+  .reveal-delay-2.visible { transition-delay: .2s; }
+  .reveal-delay-3.visible { transition-delay: .3s; }
+  .reveal-delay-4.visible { transition-delay: .4s; }
+
+  /* Animations */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.35); } 50% { box-shadow: 0 0 40px rgba(201,168,76,0.65); } }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes shake {
+    0%, 88%, 100% { transform: translateX(0); }
+    91% { transform: translateX(-2px); }
+    94% { transform: translateX(2px); }
+    97% { transform: translateX(-1px); }
+  }
+  @keyframes counter-roll { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px 28px; border-radius: 6px;
+    font-family: var(--font-display); font-weight: 600; font-size: 0.95rem;
+    letter-spacing: 0.02em; transition: all .2s ease;
+  }
+  .btn-primary {
+    background: var(--gold); color: #0a0a0a;
+    animation: shake 3s ease-in-out 2s infinite;
+  }
+  .btn-primary:hover { background: var(--gold-light); animation-play-state: paused; transform: translateY(-1px); }
+  .btn-primary.large { padding: 22px 52px; font-size: 1.05rem; }
+  .btn-ghost {
+    background: transparent; color: var(--text-primary);
+    border: 1px solid rgba(255,255,255,0.18); padding: 12px 22px;
+    animation: shake 3s ease-in-out 2s infinite;
+  }
+  .btn-ghost:hover { background: var(--gold); color: #0a0a0a; border-color: var(--gold); animation-play-state: paused; }
+
+  /* Navbar */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 22px 0; transition: all .3s ease;
+  }
+  .nav.scrolled {
+    background: rgba(10,10,10,0.7); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border); padding: 14px 0;
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo img { height: 36px; }
+
+  /* Section spacing */
+  section { padding: 100px 0; }
+  .eyebrow {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.75rem;
+    color: var(--gold); letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .section-head { text-align: center; max-width: 720px; margin: 0 auto 60px; }
+  .section-head h2 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.15; letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .section-head p { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6; }
+  .gold { color: var(--gold); }
+  em.gold { font-style: normal; color: var(--gold); }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh; padding: 140px 0 80px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; position: relative;
+  }
+  .hero::after {
+    content: ''; position: absolute; top: -10%; right: -10%;
+    width: 60vw; height: 60vw; max-width: 800px; max-height: 800px;
+    background: radial-gradient(circle, rgba(201,168,76,0.04), transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .hero .container { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
+  .hero h1 {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: clamp(2.8rem, 6vw, 5.5rem); line-height: 1.05;
+    letter-spacing: -0.035em; margin-bottom: 28px; max-width: 1000px;
+  }
+  .hero p.sub {
+    color: var(--text-secondary); font-size: clamp(1rem, 1.4vw, 1.2rem);
+    max-width: 720px; margin-bottom: 40px; line-height: 1.6;
+  }
+
+  /* Marquee */
+  .marquee-section { padding: 60px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .marquee { overflow: hidden; position: relative; }
+  .marquee-track {
+    display: flex; gap: 80px; width: max-content;
+    animation: marquee 30s linear infinite;
+  }
+  .marquee-track img {
+    height: 36px; opacity: 0.45;
+    filter: grayscale(100%) brightness(1.8);
+    transition: opacity .3s ease, filter .3s ease;
+    flex-shrink: 0;
+  }
+  .marquee-track img:hover { opacity: 0.85; filter: none; }
+
+  /* Stats */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+    border: 1px solid var(--border); background: var(--border);
+  }
+  .stat {
+    background: var(--bg-primary); padding: 50px 30px;
+    text-align: center; transition: color .3s ease, background .3s ease;
+  }
+  .stat:hover { color: var(--gold); }
+  .stat .num {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(2.2rem, 4vw, 3.4rem); letter-spacing: -0.02em;
+    margin-bottom: 8px; line-height: 1;
+  }
+  .stat .num .suffix { color: var(--gold); margin-left: 4px; }
+  .stat .label { color: var(--text-secondary); font-size: 0.85rem; letter-spacing: 0.04em; }
+
+  /* Dashboard */
+  .dashboard {
+    background: #0d1117; border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px;
+  }
+  .dash-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+  }
+  .dash-title { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
+  .live {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(34,197,94,0.4); color: #4ade80;
+    padding: 6px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 500;
+    font-family: var(--font-mono);
+  }
+  .live::before {
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
+    background: #22c55e; box-shadow: 0 0 8px #22c55e;
+    animation: pulse-glow 1.8s ease-in-out infinite;
+  }
+  .dash-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .dash-card {
+    background: linear-gradient(135deg, #141a24 0%, #111720 50%, #0f1319 100%);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 22px; position: relative; overflow: hidden;
+    min-height: 150px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .dash-card::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 60%;
+    background: linear-gradient(to top, rgba(201,168,76,0.04), transparent);
+    pointer-events: none;
+  }
+  .dash-card.wide { grid-column: span 2; }
+  .dash-card-top { display: flex; align-items: center; gap: 12px; }
+  .dash-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 1.1rem; color: var(--gold-light);
+  }
+  .dash-card-name { font-weight: 500; font-size: 0.95rem; }
+  .dash-card-tag {
+    border: 1px dashed rgba(255,255,255,0.2); color: var(--text-secondary);
+    font-family: var(--font-mono); font-size: 0.7rem;
+    padding: 3px 9px; border-radius: 4px; align-self: flex-start; letter-spacing: 0.05em;
+  }
+  .dash-value {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem); letter-spacing: -0.02em;
+    margin-top: auto; line-height: 1.1;
+  }
+  .dash-card.wide .dash-value { font-size: clamp(1.8rem, 3vw, 2.5rem); color: var(--gold-light); }
+
+  /* Calculator */
+  .calc {
+    max-width: 640px; margin: 0 auto;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 40px;
+  }
+  .calc-label { display: block; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 12px; }
+  .calc-input-wrap {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg-primary); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0 18px; transition: border-color .2s ease;
+  }
+  .calc-input-wrap:focus-within { border-color: var(--gold); }
+  .calc-input-wrap .currency { color: var(--gold); font-weight: 600; }
+  .calc-input-wrap input {
+    flex: 1; background: transparent; border: 0; outline: 0;
+    color: var(--text-primary); padding: 18px 0; font-size: 1.2rem;
+    font-family: var(--font-display); font-weight: 600;
+  }
+  .calc-results { display: none; margin-top: 32px; }
+  .calc-results.show { display: block; animation: fadeUp .5s ease; }
+  .calc-params {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 20px; overflow: hidden;
+  }
+  .calc-param { background: var(--bg-primary); padding: 14px; text-align: center; }
+  .calc-param .lbl { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .calc-param .val { font-family: var(--font-mono); color: var(--text-primary); font-size: 0.95rem; font-weight: 500; }
+  .calc-cards {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  }
+  .calc-card {
+    background: var(--bg-primary); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px;
+  }
+  .calc-card .lbl { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 6px; }
+  .calc-card .val { font-weight: 700; font-size: 1.35rem; color: var(--gold); font-family: var(--font-display); letter-spacing: -0.01em; }
+  .calc-note { color: var(--text-muted); font-size: 0.78rem; margin-top: 18px; text-align: center; }
+  .calc-info {
+    margin-top: 24px; padding: 18px 20px;
+    background: rgba(201,168,76,0.06); border-left: 3px solid var(--gold);
+    border-radius: 6px; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;
+  }
+  .calc-cta { margin-top: 28px; text-align: center; }
+  .calc-cta p { color: var(--text-secondary); margin-bottom: 14px; font-size: 0.95rem; }
+
+  /* Timeline */
+  .timeline { max-width: 760px; margin: 0 auto; position: relative; }
+  .timeline::before {
+    content: ''; position: absolute; left: 17px; top: 18px; bottom: 18px; width: 2px;
+    background: linear-gradient(to bottom, var(--gold-dark), var(--gold), var(--gold-dark));
+    opacity: 0.4;
+  }
+  .tl-item { display: flex; gap: 20px; padding: 18px 0; align-items: flex-start; }
+  .tl-marker {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold); background: var(--bg-primary);
+    color: var(--gold); font-family: var(--font-mono); font-size: 0.78rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 500; position: relative; z-index: 1;
+  }
+  .tl-body h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin-bottom: 6px; }
+  .tl-body p { color: var(--text-secondary); font-size: 0.93rem; line-height: 1.5; }
+
+  /* Manifesto */
+  .manifesto {
+    max-width: 720px; margin: 0 auto; padding: 64px 48px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; text-align: center;
+  }
+  .manifesto h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 2.8vw, 2.2rem); line-height: 1.25; letter-spacing: -0.02em; }
+  .manifesto .divider { width: 40px; height: 2px; background: var(--gold); margin: 28px auto; }
+  .manifesto p { color: var(--text-secondary); font-size: 1rem; line-height: 1.7; max-width: 580px; margin: 0 auto 18px; }
+  .manifesto p:last-child { margin-bottom: 0; }
+
+  /* Yayın */
+  .yayin-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    max-width: 720px; margin: 0 auto 48px;
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden;
+  }
+  .yayin-strip-item { padding: 22px; text-align: center; border-right: 1px solid var(--border); }
+  .yayin-strip-item:last-child { border-right: 0; }
+  .yayin-strip-item .num { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; color: var(--gold); line-height: 1.1; }
+  .yayin-strip-item .lbl { color: var(--text-secondary); font-size: 0.82rem; margin-top: 4px; }
+  .yayin-table-wrap {
+    max-width: 1000px; margin: 0 auto;
+    background: linear-gradient(135deg, #1a1418, #151015);
+    border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  }
+  .yayin-table { width: 100%; border-collapse: collapse; }
+  .yayin-table th, .yayin-table td {
+    text-align: left; padding: 16px 22px;
+    border-bottom: 1px solid var(--border); font-size: 0.92rem;
+  }
+  .yayin-table th { color: var(--text-muted); font-weight: 500; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .yayin-table tbody tr { transition: background .2s ease; }
+  .yayin-table tbody tr:hover { background: rgba(201,168,76,0.04); }
+  .yayin-table td.duration { font-family: var(--font-mono); color: var(--text-secondary); }
+  .yayin-table td.coach { color: var(--gold-light); }
+  .yayin-note { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-top: 24px; }
+
+  /* Carousel */
+  .carousel-wrap { position: relative; }
+  .carousel {
+    display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    scroll-behavior: smooth; padding: 8px 24px;
+  }
+  .carousel::-webkit-scrollbar { display: none; }
+  .carousel { scrollbar-width: none; }
+  .video-card {
+    flex: 0 0 220px; aspect-ratio: 9/16;
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; scroll-snap-align: start;
+    transition: transform .3s ease, border-color .3s ease;
+    background: var(--bg-card);
+  }
+  .video-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+  .video-card iframe { width: 100%; height: 100%; border: 0; }
+  .carousel-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(20,20,20,0.85); border: 1px solid var(--border);
+    color: var(--text-primary); display: inline-flex; align-items: center; justify-content: center;
+    z-index: 5; transition: all .2s ease;
+  }
+  .carousel-arrow:hover { background: var(--gold); color: #0a0a0a; border-color: var(--gold); }
+  .carousel-arrow.prev { left: 10px; }
+  .carousel-arrow.next { right: 10px; }
+
+  /* Steps */
+  .steps {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+    position: relative; max-width: 960px; margin: 0 auto;
+  }
+  .steps::before {
+    content: ''; position: absolute; left: 16%; right: 16%; top: 32px;
+    height: 2px; background: linear-gradient(to right, transparent, var(--gold-dark), transparent);
+    z-index: 0;
+  }
+  .step { text-align: center; position: relative; z-index: 1; }
+  .step-num {
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 1.5px solid var(--gold); background: var(--bg-primary);
+    color: var(--gold); font-family: var(--font-display); font-weight: 700;
+    font-size: 1.2rem; display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 22px; transition: all .3s ease;
+  }
+  .step:hover .step-num { background: var(--gold); color: #0a0a0a; }
+  .step h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; margin-bottom: 10px; }
+  .step p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+
+  /* FAQ */
+  .faq { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .faq-q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 24px; text-align: left;
+    font-family: var(--font-display); font-weight: 500; font-size: 1.02rem;
+    color: var(--text-primary); gap: 16px;
+  }
+  .faq-q:hover { background: var(--bg-card-hover); }
+  .faq-chev {
+    width: 28px; height: 28px; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--gold); transition: transform .25s ease;
+    font-size: 1.4rem; font-weight: 300;
+  }
+  .faq-item.open .faq-chev { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease, padding .3s ease;
+    color: var(--text-secondary); line-height: 1.65;
+    padding: 0 24px;
+  }
+  .faq-item.open .faq-a { max-height: 400px; padding: 0 24px 22px; }
+
+  /* Final CTA */
+  .final-cta { position: relative; padding: 120px 0; text-align: center; overflow: hidden; }
+  .final-cta::before {
+    content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 90vw; height: 90vw; max-width: 900px; max-height: 900px;
+    background: radial-gradient(circle, rgba(201,168,76,0.06), transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .final-cta .container { position: relative; z-index: 1; }
+  .final-cta h2 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(2rem, 4.5vw, 3.4rem); line-height: 1.15; letter-spacing: -0.025em;
+    max-width: 800px; margin: 0 auto 24px;
+  }
+  .final-cta em.gold { font-style: italic; }
+  .final-cta p.sub { color: var(--text-secondary); font-size: 1.05rem; max-width: 600px; margin: 0 auto 36px; line-height: 1.6; }
+  .urgency { margin-top: 26px; color: var(--text-muted); font-size: 0.88rem; }
+  .urgency .mark { color: var(--gold); margin-right: 6px; font-family: var(--font-mono); }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--border); padding: 50px 0 40px; }
+  .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center; }
+  .footer-logo img { height: 32px; opacity: 0.85; }
+  .socials { display: flex; gap: 12px; }
+  .social-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--bg-card);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); transition: all .2s ease;
+  }
+  .social-btn:hover { color: #0a0a0a; background: var(--gold); border-color: var(--gold); }
+  .social-btn svg { width: 18px; height: 18px; }
+  .copyright { color: var(--text-muted); font-size: 0.82rem; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    section { padding: 70px 0; }
+    .nav-inner { padding: 0; }
+    .btn-primary { width: 100%; padding: 18px 24px; }
+    .hero { padding: 110px 0 60px; }
+    .hero h1 { font-size: clamp(2.2rem, 8vw, 3.5rem); }
+    .hero .btn-primary { width: calc(100% - 16px); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .dash-grid { grid-template-columns: 1fr; }
+    .dash-card.wide { grid-column: span 1; }
+    .calc { padding: 28px 20px; }
+    .calc-params { grid-template-columns: 1fr; }
+    .calc-cards { grid-template-columns: 1fr; }
+    .tl-marker { width: 28px; height: 28px; font-size: 0.7rem; }
+    .timeline::before { left: 13px; }
+    .yayin-strip { grid-template-columns: 1fr; }
+    .yayin-strip-item { border-right: 0; border-bottom: 1px solid var(--border); }
+    .yayin-strip-item:last-child { border-bottom: 0; }
+    .yayin-table th:nth-child(3), .yayin-table td.coach { display: none; }
+    .yayin-table th, .yayin-table td { padding: 14px 16px; font-size: 0.85rem; }
+    .video-card { flex: 0 0 180px; }
+    .carousel-arrow { display: none; }
+    .steps { grid-template-columns: 1fr; gap: 40px; }
+    .steps::before { display: none; }
+    .faq-q { padding: 18px 18px; font-size: 0.95rem; }
+    .faq { max-width: 100%; }
+    .final-cta { padding: 90px 0; }
+    .final-cta .btn-primary { width: 100%; }
+    .manifesto { padding: 40px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 1. NAVBAR -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo"><img src="/assets/logo.png" alt="RoaSell" /></a>
+    <a href="https://calendly.com/PLACEHOLDER" class="btn btn-ghost">Ücretsiz Görüşme</a>
+  </div>
+</header>
+
+<!-- 2. HERO -->
+<section class="hero">
+  <div class="container">
+    <h1 class="reveal">Başarısız Denemeler Artık <em class="gold">Geride Kalsın</em></h1>
+    <p class="sub reveal reveal-delay-1">8 yıldır Türkiye, Avrupa ve Amerika'da markalar kuruyoruz. Şimdi bu deneyimi <span style="color:var(--text-primary);font-weight:500;">RoaSell Ekosistemi</span> ile seninle paylaşıyoruz.</p>
+    <a href="https://calendly.com/PLACEHOLDER" class="btn btn-primary reveal reveal-delay-2">Ücretsiz Randevu Al →</a>
+  </div>
+</section>
+
+<!-- 3. BRAND MARQUEE -->
+<section class="marquee-section">
+  <div class="marquee">
+    <div class="marquee-track">
+      <img src="/assets/brands/brand-1.png" alt="" />
+      <img src="/assets/brands/brand-2.png" alt="" />
+      <img src="/assets/brands/brand-3.png" alt="" />
+      <img src="/assets/brands/brand-4.png" alt="" />
+      <img src="/assets/brands/brand-5.png" alt="" />
+      <img src="/assets/brands/brand-1.png" alt="" />
+      <img src="/assets/brands/brand-2.png" alt="" />
+      <img src="/assets/brands/brand-3.png" alt="" />
+      <img src="/assets/brands/brand-4.png" alt="" />
+      <img src="/assets/brands/brand-5.png" alt="" />
+    </div>
+  </div>
+</section>
+
+<!-- 4. STATS -->
+<section>
+  <div class="container">
+    <div class="stats-grid reveal">
+      <div class="stat"><div class="num"><span class="counter" data-target="600">0</span><span class="suffix">M+</span></div><div class="label">TL Ciro</div></div>
+      <div class="stat"><div class="num"><span class="counter" data-target="1200">0</span><span class="suffix">+</span></div><div class="label">Aktif Öğrenci</div></div>
+      <div class="stat"><div class="num"><span class="counter" data-target="85">0</span><span class="suffix">%</span></div><div class="label">Başarı Oranı</div></div>
+      <div class="stat"><div class="num"><span class="counter" data-target="3">0</span></div><div class="label">Yıllık Deneyim</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. DASHBOARD -->
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Lafta Değil, Rakamda</span>
+      <h2>Öğrencilerimizin Gerçek Cirosu</h2>
+      <p>Teori satmıyoruz. Mağazaları bağlı ciro sayacımız her şeyi gösteriyor.</p>
+    </div>
+    <div class="dashboard reveal">
+      <div class="dash-header">
+        <div class="dash-title">RoaSell Report ✳</div>
+        <div class="live">Canlı</div>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card wide">
+          <div class="dash-card-top"><div class="dash-icon">₺</div><div class="dash-card-name">Ciro</div></div>
+          <div class="dash-card-tag">TOPLAM</div>
+          <div class="dash-value">₺602.809.824</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-top"><div class="dash-icon">▶</div><div class="dash-card-name">Reklam Harcaması</div></div>
+          <div class="dash-card-tag">TOPLAM</div>
+          <div class="dash-value">₺130.761.350</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-top"><div class="dash-icon">≡</div><div class="dash-card-name">Ortalama Sipariş</div></div>
+          <div class="dash-card-tag">ORTALAMA</div>
+          <div class="dash-value">Tutar: ₺2.072</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-top"><div class="dash-icon">⊞</div><div class="dash-card-name">Sipariş</div></div>
+          <div class="dash-card-tag">ADET</div>
+          <div class="dash-value">Toplam: 290.932</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-top"><div class="dash-icon">↗</div><div class="dash-card-name">ROAS</div></div>
+          <div class="dash-card-tag">ORTALAMA</div>
+          <div class="dash-value">Ortalama: 4.61</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. CALCULATOR -->
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Kendi Rakamlarını Gör</span>
+      <h2>Hedeflediğin Kâra Ulaşmak İçin Ne Gerekiyor?</h2>
+    </div>
+    <div class="calc reveal">
+      <label class="calc-label" for="calc-input">Aylık Kâr Hedefin (₺)</label>
+      <div class="calc-input-wrap">
+        <span class="currency">₺</span>
+        <input type="number" id="calc-input" placeholder="örn. 100000" inputmode="numeric" />
+      </div>
+      <div class="calc-results" id="calc-results">
+        <div class="calc-params">
+          <div class="calc-param"><div class="lbl">Ort. Sipariş</div><div class="val">₺2.072</div></div>
+          <div class="calc-param"><div class="lbl">Kâr Marjı</div><div class="val">%30</div></div>
+          <div class="calc-param"><div class="lbl">ROAS</div><div class="val">4.61</div></div>
+        </div>
+        <div class="calc-cards">
+          <div class="calc-card"><div class="lbl">Aylık Ciro Hedefin</div><div class="val" id="r-rev">₺0</div></div>
+          <div class="calc-card"><div class="lbl">Aylık Sipariş</div><div class="val" id="r-mo">0</div></div>
+          <div class="calc-card"><div class="lbl">Günlük Sipariş</div><div class="val" id="r-do">0</div></div>
+          <div class="calc-card"><div class="lbl">Aylık Reklam Harcaması</div><div class="val" id="r-ad">₺0</div></div>
+        </div>
+        <div class="calc-note">* Hesaplamalar ekosistemimizin ortalama verilerine dayanmaktadır.</div>
+        <div class="calc-info">Bu işe başlamak için hesaplanan reklam maliyetini tek seferde sermaye olarak koymana gerek yok. Küçük başlarsın, siparişler gelmeye başlar, kazandığın gelirle reklam bütçeni büyütürsün. Sistem kendi kendini besler.</div>
+        <div class="calc-cta">
+          <p>Bu rakamlara nasıl ulaşacağını birlikte konuşalım.</p>
+          <a href="https://calendly.com/PLACEHOLDER" class="btn btn-primary">Ücretsiz Randevu Al →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. TIMELINE -->
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Adım Adım İlerliyorsun</span>
+      <h2>Programın Yol Haritası</h2>
+      <p>9 modül, sıfırdan yayın kayıtlarına. Her adımda yanındayız.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal"><div class="tl-marker">01</div><div class="tl-body"><h3>Temeller</h3><p>E-ticaret ekosistemini sıfırdan haritalandırıyoruz: kavramlar, jargon, ekonomik mantık ve yolun nereye çıktığı.</p></div></div>
+      <div class="tl-item reveal"><div class="tl-marker">02</div><div class="tl-body"><h3>Şirket &amp; Ödeme Kurulumu</h3><p>Şirket türü seçimi, vergi yapılandırması, ödeme altyapısı ve kargo entegrasyonu.</p></div></div>
+      <div class="tl-item reveal"><div class="tl-marker">03</div><div class="tl-body"><h3>Ürün Araştırma</h3><p>Trend analizi, niş seçimi, marj hesabı ve fikrini sahaya çıkarmadan doğrulama yöntemleri.</p></div></div>
+      <div class="tl-item reveal"><div class="tl-marker">04</div><div class="tl-body"><h3>Satış</h3><p>Mağaza yapısı, dönüşüm odaklı sayfa kurulumu, sepet ve ödeme akışı optimizasyonu.</p></div></div>
+      <div class="tl-item reveal"><div class="tl-marker">05</div><div class="tl-body"><h3>Pazarlama</h3><p>Meta, Google, TikTok reklam stratejileri ve performans optimizasyonu.</p></div></div>
+      <div class="tl-item reveal"><div class="tl-marker">06</div><div class="tl-body"><h3>Tedarik</h3><p>Tedarikçi bulma, müzakere, kalite kontrol ve lojistik süreçleri.</p></div></div>
+      <div class="tl-item reveal"><div class="tl-marker">07</div><div class="tl-body"><h3>Uygulamalı Örnekler — Bizim Markalarımız</h3><p>Gerçek mağazalarımızı satır satır inceleyip kendi modellerinize uyarlatıyoruz.</p></div></div>
+      <div class="tl-item reveal"><div class="tl-marker">08</div><div class="tl-body"><h3>Ekipleşmek</h3><p>İlk işe alımlar, görev dağılımı ve sürdürülebilir bir operasyon kurulumu.</p></div></div>
+      <div class="tl-item reveal"><div class="tl-marker">09</div><div class="tl-body"><h3>Yayın Kayıtları</h3><p>Tüm canlı eğitim arşivine ömür boyu erişim.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. MANIFESTO -->
+<section>
+  <div class="container">
+    <div class="manifesto reveal">
+      <h2>Sadece e-ticareti değil, <span class="gold">gerçek pazarlamayı</span> öğretiyoruz.</h2>
+      <div class="divider"></div>
+      <p>Farklı bir işte çalışıyor olabilirsin, farklı bir girişimin olabilir, veya fiziki bir dükkanın olabilir — hiç fark etmez. Her ne olursa olsun para kazanılan bir yerde asıl anahtar trafiği getirmek ve bu trafiği nakite dönüştürmektir.</p>
+      <p>Bu sistemi yalnızca e-ticaret için değil, trafiği nasıl ucuza getirebileceğinizi ve bu trafiği nasıl nakite dönüştürebileceğinizi öğretecek şekilde tasarladık.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9. YAYIN -->
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Kurs Değil, Canlı Destek</span>
+      <h2>Her Ay 60+ Saat Canlı Eğitim</h2>
+    </div>
+    <div class="yayin-strip reveal">
+      <div class="yayin-strip-item"><div class="num">60+</div><div class="lbl">Saat / Ay</div></div>
+      <div class="yayin-strip-item"><div class="num">5+</div><div class="lbl">Uzman Koç</div></div>
+      <div class="yayin-strip-item"><div class="num">200+</div><div class="lbl">Yayın Kaydı</div></div>
+    </div>
+    <div class="yayin-table-wrap reveal">
+      <table class="yayin-table">
+        <thead>
+          <tr><th>Yayın Konu Anlatımı</th><th>Yayın Süresi</th><th>Yayın Yapan Koç</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Shopify Mağaza Kurulumu — Sıfırdan Yayına</td><td class="duration">2s 15dk</td><td class="coach">Sefa Aydın</td></tr>
+          <tr><td>Facebook Reklam Optimizasyonu Derinlemesine</td><td class="duration">1s 48dk</td><td class="coach">Simay Öztel</td></tr>
+          <tr><td>Google Ads Performance Max Stratejisi</td><td class="duration">2s 30dk</td><td class="coach">Furkan Yiğit Koç</td></tr>
+          <tr><td>Ürün Araştırma Metodolojisi ve Marj Hesabı</td><td class="duration">1s 55dk</td><td class="coach">Sefa Aydın</td></tr>
+          <tr><td>Tedarikçi Bulma ve Müzakere Teknikleri</td><td class="duration">1s 20dk</td><td class="coach">Selçuk Bostancıoğlu</td></tr>
+          <tr><td>Dönüşüm Oranı İyileştirme Atölyesi</td><td class="duration">2s 05dk</td><td class="coach">Simay Öztel</td></tr>
+          <tr><td>Müşteri Sadakati ve Yaşam Boyu Değer (LTV)</td><td class="duration">1s 35dk</td><td class="coach">Efkan Hançerkıran</td></tr>
+          <tr><td>Şirket Kuruluşu, Vergi ve Muhasebe Temelleri</td><td class="duration">1s 10dk</td><td class="coach">Gürkan Ordueri</td></tr>
+          <tr><td>Marka Kimliği ve Pazar Konumlandırma</td><td class="duration">1s 45dk</td><td class="coach">Sefa Aydın</td></tr>
+          <tr><td>Pazaryeri mi, Kendi Mağazan mı?</td><td class="duration">1s 25dk</td><td class="coach">Selçuk Bostancıoğlu</td></tr>
+          <tr><td>UGC İçerik ve Yaratıcı Strateji</td><td class="duration">2s 20dk</td><td class="coach">Simay Öztel</td></tr>
+          <tr><td>Çapraz Satış ve Upsell Otomasyonları</td><td class="duration">1s 30dk</td><td class="coach">Furkan Yiğit Koç</td></tr>
+          <tr><td>E-posta Pazarlama ve Klaviyo Akışları</td><td class="duration">1s 50dk</td><td class="coach">Efkan Hançerkıran</td></tr>
+          <tr><td>Yıl Sonu Kampanya Planlama Atölyesi</td><td class="duration">2s 10dk</td><td class="coach">Gürkan Ordueri</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="yayin-note">+ yüzlerce yayın kaydı daha arşivde seni bekliyor</div>
+  </div>
+</section>
+
+<!-- 10. CAROUSEL -->
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Başarı Hikayeleri</span>
+      <h2>Öğrencilerimiz Ne Diyor?</h2>
+    </div>
+  </div>
+  <div class="carousel-wrap">
+    <button class="carousel-arrow prev" aria-label="Önceki" id="car-prev">‹</button>
+    <button class="carousel-arrow next" aria-label="Sonraki" id="car-next">›</button>
+    <div class="carousel" id="carousel">
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195627606?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195627531?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195627881?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195626597?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195627207?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195627462?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195627675?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195627030?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195626896?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+      <div class="video-card"><iframe src="https://player.vimeo.com/video/1195627292?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. STEPS -->
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Çok Basit</span>
+      <h2>3 Adımda Başla</h2>
+      <p>Daha fazla erteleme yok. İlk adımı at, gerisini birlikte halledelim.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="step-num">01</div><h3>Görüşme Al</h3><p>15 dakikalık ücretsiz görüşmede seni dinliyoruz, mevcut durumunu ve hedeflerini anlıyoruz.</p></div>
+      <div class="step reveal reveal-delay-1"><div class="step-num">02</div><h3>Yol Haritanı Al</h3><p>Hedeflerine göre sana özel bir plan çıkarıyoruz: hangi modüller, hangi sırayla, hangi sürede.</p></div>
+      <div class="step reveal reveal-delay-2"><div class="step-num">03</div><h3>Satışa Geç</h3><p>Mentörlük eşliğinde mağazanı kuruyorsun, ilk satışlarını alıyor ve sistemi büyütüyorsun.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. FAQ -->
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Kafandaki Sorular</span>
+      <h2>Merak Ettiklerin</h2>
+    </div>
+    <div class="faq">
+      <div class="faq-item reveal">
+        <button class="faq-q"><span>Hiç deneyimim yok, yine de katılabilir miyim?</span><span class="faq-chev">+</span></button>
+        <div class="faq-a"><p>Öğrencilerimizin çoğu sıfırdan başladı. Programın tasarımı, hiç deneyimi olmayanları adım adım ilerletmek üzerine kurulu. Sana özel yol haritası çıkarıyoruz, hangi modülden başlamandan satışını almana kadar yanındayız.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q"><span>Ne kadar sürede sonuç alabilirim?</span><span class="faq-chev">+</span></button>
+        <div class="faq-a"><p>Çoğu öğrencimiz ilk 30 gün içinde ilk satışına ulaşıyor. Ölçeklenme ise bireysel — haftada ayırdığın süre, sermaye ve uygulama hızına bağlı olarak 3-6 ay içinde anlamlı rakamları görmek mümkün.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q"><span>Başlangıç için ne kadar sermaye gerekiyor?</span><span class="faq-chev">+</span></button>
+        <div class="faq-a"><p>Dropshipping modeli sayesinde stoksuz başlayabilirsin. Başlangıç sermayeni reklam testlerine ayırırsın, satışlardan gelen geliri tekrar reklama yatırarak sistemin kendi kendini beslemesini sağlarsın. Görüşmede senin durumuna göre net rakam konuşuyoruz.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q"><span>Daha önce denedim ama başarısız oldum. Bu neden farklı?</span><span class="faq-chev">+</span></button>
+        <div class="faq-a"><p>Tek başına YouTube videolarıyla öğrenmekle, bizzat çalışan markaları kurmuş bir ekiple mentörlük almak farklı şeyler. Sana hangi adımı atacağını söyleriz, atladığın yeri gösteririz, kör noktalarını birlikte kapatırız.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q"><span>Ücretsiz görüşmede ne konuşuyoruz?</span><span class="faq-chev">+</span></button>
+        <div class="faq-a"><p>Seni tanıyoruz, hedeflerini anlıyoruz, mevcut durumunu değerlendiriyoruz. Sonunda sana net bir tablo bırakıyoruz: bu işin sana uygun olup olmadığını, uygun ise nereden başlayacağını birlikte konuşuyoruz. Satış konuşması değil, danışmanlık.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13. FINAL CTA -->
+<section class="final-cta">
+  <div class="container">
+    <span class="eyebrow reveal">Son Adım</span>
+    <h2 class="reveal">Bir Sonraki Ay da <em class="gold">Aynı Yerde</em> mi Olacaksın?</h2>
+    <p class="sub reveal reveal-delay-1">15 dakikalık ücretsiz görüşme — sana bir şey kazandırır mı bilmiyoruz ama kaybettirmeyeceği kesin.</p>
+    <a href="https://calendly.com/PLACEHOLDER" class="btn btn-primary large reveal reveal-delay-2">Hemen Görüşme Al →</a>
+    <div class="urgency reveal reveal-delay-3"><span class="mark">●</span>Kontenjan sınırlıdır — Her hafta sadece belirli sayıda görüşme yapılıyor</div>
+  </div>
+</section>
+
+<!-- 14. FOOTER -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-logo"><img src="/assets/logo.png" alt="RoaSell" /></div>
+    <div class="socials">
+      <a href="https://instagram.com/PLACEHOLDER" class="social-btn" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      </a>
+      <a href="https://youtube.com/PLACEHOLDER" class="social-btn" aria-label="YouTube">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33zM9.75 15.02V8.48l5.75 3.27z"/></svg>
+      </a>
+    </div>
+    <div class="copyright">© 2026 Roasell. Tüm hakları saklıdır.</div>
+  </div>
+</footer>
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+  // Navbar scroll
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 50);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Reveal observer
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Counter (easeOutQuart)
+  const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
+  const fmt = n => Math.floor(n).toLocaleString('tr-TR');
+  const counterIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseFloat(el.dataset.target);
+      const dur = 2000;
+      const start = performance.now();
+      const tick = (now) => {
+        const t = Math.min((now - start) / dur, 1);
+        el.textContent = fmt(target * easeOutQuart(t));
+        if (t < 1) requestAnimationFrame(tick);
+        else el.textContent = fmt(target);
+      };
+      requestAnimationFrame(tick);
+      counterIO.unobserve(el);
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.counter').forEach(el => counterIO.observe(el));
+
+  // FAQ
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const open = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!open) item.classList.add('open');
+    });
+  });
+
+  // Smooth scroll for in-page anchors
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      if (id.length > 1) {
+        const t = document.querySelector(id);
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+      }
+    });
+  });
+
+  // Calculator
+  const trFmt = n => n.toLocaleString('tr-TR', { maximumFractionDigits: 0 });
+  const input = document.getElementById('calc-input');
+  const results = document.getElementById('calc-results');
+  const rRev = document.getElementById('r-rev');
+  const rMo  = document.getElementById('r-mo');
+  const rDo  = document.getElementById('r-do');
+  const rAd  = document.getElementById('r-ad');
+  const calc = () => {
+    const target = parseFloat(input.value) || 0;
+    if (target <= 0) { results.classList.remove('show'); return; }
+    const rev = target / 0.30;
+    const orders = rev / 2072;
+    const daily = orders / 30;
+    const ads = rev / 4.61;
+    rRev.textContent = '₺' + trFmt(rev);
+    rMo.textContent  = trFmt(orders);
+    rDo.textContent  = trFmt(daily);
+    rAd.textContent  = '₺' + trFmt(ads);
+    results.classList.add('show');
+  };
+  input.addEventListener('input', calc);
+
+  // Carousel arrows
+  const carousel = document.getElementById('carousel');
+  document.getElementById('car-prev').addEventListener('click', () => carousel.scrollBy({ left: -260, behavior: 'smooth' }));
+  document.getElementById('car-next').addEventListener('click', () => carousel.scrollBy({ left:  260, behavior: 'smooth' }));
+</script>
+
+</body>
+</html>
