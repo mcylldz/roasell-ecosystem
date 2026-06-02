@@ -308,16 +308,21 @@
   .tl-body p { color: var(--text-secondary); font-size: 0.93rem; line-height: 1.5; }
 
   /* Calendly inline */
-  .calendly-host { display: none; }
+  .calendly-host { display: none; position: relative; }
   .calendly-host.open {
-    display: block; width: 100%; max-width: 940px;
-    margin: 0 auto; padding: 40px 20px 60px;
-    height: 800px;
+    display: block; width: 100%; max-width: 980px;
+    margin: 30px auto 50px; padding: 0 20px;
+    min-height: 720px;
   }
-  .calendly-host.open > div { height: 100%; min-height: 700px; }
-  @media (max-width: 768px) {
-    .calendly-host.open { padding: 24px 12px 40px; height: 760px; }
+  .calendly-host.open > * { width: 100%; min-height: 720px; border-radius: 12px; overflow: hidden; }
+  .calendly-host.open iframe { width: 100% !important; min-height: 720px !important; border: 0; display: block; }
+  .calendly-host .cal-loading {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); font-size: 0.95rem;
+    min-height: 720px; border: 1px solid var(--border); border-radius: 12px;
+    background: var(--bg-card);
   }
+  .calendly-host .cal-loading .err-link { color: var(--gold); margin-left: 6px; text-decoration: underline; }
 
   /* UrunHub */
   .urunhub-frame {
@@ -607,7 +612,7 @@
 <header class="nav" id="nav">
   <div class="container nav-inner">
     <a href="#" class="nav-logo"><img src="/assets/logo.png" alt="RoaSell" /></a>
-    <a href="https://calendly.com/roasell/roasell-analiz-gorusmesi" class="btn btn-ghost cta-open" data-cal-target="cal-hero">Ücretsiz Görüşme</a>
+    <button type="button" class="btn btn-ghost cta-open" data-cal-target="cal-hero">Ücretsiz Görüşme</button>
   </div>
 </header>
 
@@ -616,7 +621,7 @@
   <div class="container">
     <h1 class="reveal">Bahaneler Artık <em class="gold">Geride Kalsın</em></h1>
     <p class="sub reveal reveal-delay-1">8 yıldır Türkiye, Avrupa ve Amerika'da markalar kuruyoruz. Şimdi bu deneyimi <span style="color:var(--text-primary);font-weight:500;">RoaSell Ekosistemi</span> ile seninle paylaşıyoruz.</p>
-    <a href="https://calendly.com/roasell/roasell-analiz-gorusmesi" class="btn btn-primary cta-open reveal reveal-delay-2" data-cal-target="cal-hero">Ücretsiz Randevu Al →</a>
+    <button type="button" class="btn btn-primary cta-open reveal reveal-delay-2" data-cal-target="cal-hero">Ücretsiz Randevu Al →</button>
   </div>
 </section>
 
@@ -684,7 +689,7 @@
         <div class="calc-info">Bu işe başlamak için hesaplanan reklam maliyetini tek seferde sermaye olarak koymana gerek yok. Küçük başlarsın, siparişler gelmeye başlar, kazandığın gelirle reklam bütçeni büyütürsün. Sistem kendi kendini besler.</div>
         <div class="calc-cta">
           <p>Bu rakamlara nasıl ulaşacağını birlikte konuşalım.</p>
-          <a href="https://calendly.com/roasell/roasell-analiz-gorusmesi" class="btn btn-primary cta-open" data-cal-target="cal-calc">Ücretsiz Randevu Al →</a>
+          <button type="button" class="btn btn-primary cta-open" data-cal-target="cal-calc">Ücretsiz Randevu Al →</button>
         </div>
       </div>
     </div>
@@ -855,7 +860,7 @@
     <span class="eyebrow reveal">Son Adım</span>
     <h2 class="reveal">Bir Sonraki Ay da <em class="gold">Aynı Yerde</em> mi Olacaksın?</h2>
     <p class="sub reveal reveal-delay-1">30 dakikalık ücretsiz görüşme — tek bir 30 dakikalık görüşme sana bir anda çok şey kazandırır mı bilmiyoruz ama kaybettirmeyeceği kesin.</p>
-    <a href="https://calendly.com/roasell/roasell-analiz-gorusmesi" class="btn btn-primary large cta-open reveal reveal-delay-2" data-cal-target="cal-final">Hemen Görüşme Al →</a>
+    <button type="button" class="btn btn-primary large cta-open reveal reveal-delay-2" data-cal-target="cal-final">Hemen Görüşme Al →</button>
     <div class="urgency reveal reveal-delay-3"><span class="mark">●</span>Kontenjan sınırlıdır — Her hafta sadece belirli sayıda görüşme yapılıyor</div>
   </div>
 </section>
@@ -968,26 +973,43 @@
   document.getElementById('car-next').addEventListener('click', () => carousel.scrollBy({ left:  260, behavior: 'smooth' }));
 
   // Calendly inline embed
-  const waitForCalendly = () => new Promise(resolve => {
-    if (window.Calendly) return resolve();
+  const waitForCalendly = (timeoutMs = 10000) => new Promise((resolve, reject) => {
+    if (window.Calendly && typeof window.Calendly.initInlineWidget === 'function') return resolve();
+    const start = performance.now();
     const t = setInterval(() => {
-      if (window.Calendly) { clearInterval(t); resolve(); }
+      if (window.Calendly && typeof window.Calendly.initInlineWidget === 'function') {
+        clearInterval(t); resolve();
+      } else if (performance.now() - start > timeoutMs) {
+        clearInterval(t); reject(new Error('Calendly yüklenemedi'));
+      }
     }, 100);
   });
+  const fallbackUrl = 'https://calendly.com/roasell/roasell-analiz-gorusmesi';
   const openCal = async (id) => {
     const host = document.getElementById(id);
     if (!host) return;
     if (host.dataset.opened !== '1') {
+      // Add loading placeholder
+      host.innerHTML = '<div class="cal-loading">Takvim yükleniyor…</div>';
       host.classList.add('open');
-      await waitForCalendly();
-      Calendly.initInlineWidget({ url: host.dataset.calendlyUrl, parentElement: host });
-      host.dataset.opened = '1';
+      // Scroll into view immediately so user sees the loading state below the button
+      setTimeout(() => host.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+      try {
+        await waitForCalendly();
+        host.innerHTML = ''; // Clear loading placeholder
+        window.Calendly.initInlineWidget({ url: host.dataset.calendlyUrl, parentElement: host });
+        host.dataset.opened = '1';
+      } catch (err) {
+        host.innerHTML = '<div class="cal-loading">Takvim yüklenemedi.<a class="err-link" href="' + fallbackUrl + '" target="_blank" rel="noopener">Calendly\'de aç</a></div>';
+      }
+    } else {
+      host.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    setTimeout(() => host.scrollIntoView({ behavior: 'smooth', block: 'start' }), 140);
   };
   document.querySelectorAll('[data-cal-target]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       openCal(btn.dataset.calTarget);
     });
   });
