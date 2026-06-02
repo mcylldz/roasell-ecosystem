@@ -618,38 +618,8 @@
       <h2>Öğrencilerimizin Gerçek Cirosu</h2>
       <p>Teori satmıyoruz. Mağazaları bağlı ciro sayacımız her şeyi gösteriyor.</p>
     </div>
-    <div class="dashboard reveal">
-      <div class="dash-header">
-        <div class="dash-title">RoaSell Report ✳</div>
-        <div class="live">Canlı</div>
-      </div>
-      <div class="dash-grid">
-        <div class="dash-card wide">
-          <div class="dash-card-top"><div class="dash-icon">₺</div><div class="dash-card-name">Ciro</div></div>
-          <div class="dash-card-tag">TOPLAM</div>
-          <div class="dash-value">₺602.809.824</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-top"><div class="dash-icon">▶</div><div class="dash-card-name">Reklam Harcaması</div></div>
-          <div class="dash-card-tag">TOPLAM</div>
-          <div class="dash-value">₺130.761.350</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-top"><div class="dash-icon">≡</div><div class="dash-card-name">Ortalama Sipariş</div></div>
-          <div class="dash-card-tag">ORTALAMA</div>
-          <div class="dash-value">Tutar: ₺2.072</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-top"><div class="dash-icon">⊞</div><div class="dash-card-name">Sipariş</div></div>
-          <div class="dash-card-tag">ADET</div>
-          <div class="dash-value">Toplam: 290.932</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-top"><div class="dash-icon">↗</div><div class="dash-card-name">ROAS</div></div>
-          <div class="dash-card-tag">ORTALAMA</div>
-          <div class="dash-value">Ortalama: 4.61</div>
-        </div>
-      </div>
+    <div class="urunhub-frame reveal">
+      <img src="/assets/dashboard.jpg" alt="RoaSell Report — Ciro, Reklam Harcaması, Ortalama Sipariş, Sipariş, ROAS" loading="lazy" />
     </div>
   </div>
 </section>
@@ -670,9 +640,9 @@
       </div>
       <div class="calc-results" id="calc-results">
         <div class="calc-params">
-          <div class="calc-param"><div class="lbl">Ort. Sipariş</div><div class="val">₺2.072</div></div>
+          <div class="calc-param"><div class="lbl">Ort. Sipariş</div><div class="val">₺2.056</div></div>
           <div class="calc-param"><div class="lbl">Kâr Marjı</div><div class="val">%30</div></div>
-          <div class="calc-param"><div class="lbl">ROAS</div><div class="val">4.61</div></div>
+          <div class="calc-param"><div class="lbl">ROAS</div><div class="val">3.77</div></div>
         </div>
         <div class="calc-cards">
           <div class="calc-card"><div class="lbl">Aylık Ciro Hedefin</div><div class="val" id="r-rev">₺0</div></div>
@@ -947,9 +917,9 @@
     const target = parseFloat(input.value) || 0;
     if (target <= 0) { results.classList.remove('show'); return; }
     const rev = target / 0.30;
-    const orders = rev / 2072;
+    const orders = rev / 2056;
     const daily = orders / 30;
-    const ads = rev / 4.61;
+    const ads = rev / 3.77;
     rRev.textContent = '₺' + trFmt(rev);
     rMo.textContent  = trFmt(orders);
     rDo.textContent  = trFmt(daily);
