@@ -308,21 +308,54 @@
   .tl-body p { color: var(--text-secondary); font-size: 0.93rem; line-height: 1.5; }
 
   /* Calendly inline */
-  .calendly-host { display: none; position: relative; }
+  .calendly-host { display: none; }
+  .calendly-host.preloading {
+    display: block; position: absolute; left: -9999px; top: 0;
+    width: 980px; height: 720px;
+    visibility: hidden; opacity: 0;
+  }
   .calendly-host.open {
     display: block; width: 100%; max-width: 980px;
-    margin: 30px auto 50px; padding: 0 20px;
-    min-height: 720px;
+    margin: 0 auto; padding: 12px 20px;
+    height: 740px;
+    animation: cal-fade-in 0.5s ease;
   }
-  .calendly-host.open > * { width: 100%; min-height: 720px; border-radius: 12px; overflow: hidden; }
-  .calendly-host.open iframe { width: 100% !important; min-height: 720px !important; border: 0; display: block; }
+  .calendly-host.open > * { width: 100%; height: 100%; }
+  .calendly-host.open iframe { width: 100% !important; height: 100% !important; border: 0; display: block; border-radius: 12px; }
   .calendly-host .cal-loading {
     display: flex; align-items: center; justify-content: center;
     color: var(--text-secondary); font-size: 0.95rem;
-    min-height: 720px; border: 1px solid var(--border); border-radius: 12px;
+    height: 100%; border: 1px solid var(--border); border-radius: 12px;
     background: var(--bg-card);
   }
   .calendly-host .cal-loading .err-link { color: var(--gold); margin-left: 6px; text-decoration: underline; }
+  @keyframes cal-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Button loading spinner */
+  .btn-loading {
+    pointer-events: none;
+    color: transparent !important;
+    text-shadow: none !important;
+    position: relative;
+    animation-play-state: paused !important;
+  }
+  .btn-loading::after {
+    content: ''; position: absolute; left: 50%; top: 50%;
+    width: 20px; height: 20px; margin: -10px 0 0 -10px;
+    border: 2.5px solid rgba(0,0,0,0.18);
+    border-top-color: var(--bg-primary);
+    border-radius: 50%;
+    animation: btn-spin 0.7s linear infinite;
+  }
+  .btn-ghost.btn-loading::after {
+    border-color: rgba(255,255,255,0.2);
+    border-top-color: var(--text-primary);
+  }
+  @keyframes btn-spin { to { transform: rotate(360deg); } }
+  @media (max-width: 768px) {
+    .calendly-host.open { padding: 8px 12px; height: 700px; }
+    .calendly-host.preloading { width: calc(100vw - 24px); height: 700px; }
+  }
 
   /* UrunHub */
   .urunhub-frame {
@@ -973,6 +1006,8 @@
   document.getElementById('car-next').addEventListener('click', () => carousel.scrollBy({ left:  260, behavior: 'smooth' }));
 
   // Calendly inline embed
+  const CAL_MIN_DELAY = 2500;
+  const fallbackUrl = 'https://calendly.com/roasell/roasell-analiz-gorusmesi';
   const waitForCalendly = (timeoutMs = 10000) => new Promise((resolve, reject) => {
     if (window.Calendly && typeof window.Calendly.initInlineWidget === 'function') return resolve();
     const start = performance.now();
@@ -984,33 +1019,46 @@
       }
     }, 100);
   });
-  const fallbackUrl = 'https://calendly.com/roasell/roasell-analiz-gorusmesi';
-  const openCal = async (id) => {
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+  const openCal = async (id, btn) => {
     const host = document.getElementById(id);
     if (!host) return;
-    if (host.dataset.opened !== '1') {
-      // Add loading placeholder
-      host.innerHTML = '<div class="cal-loading">Takvim yükleniyor…</div>';
-      host.classList.add('open');
-      // Scroll into view immediately so user sees the loading state below the button
-      setTimeout(() => host.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
-      try {
-        await waitForCalendly();
-        host.innerHTML = ''; // Clear loading placeholder
-        window.Calendly.initInlineWidget({ url: host.dataset.calendlyUrl, parentElement: host });
-        host.dataset.opened = '1';
-      } catch (err) {
-        host.innerHTML = '<div class="cal-loading">Takvim yüklenemedi.<a class="err-link" href="' + fallbackUrl + '" target="_blank" rel="noopener">Calendly\'de aç</a></div>';
-      }
-    } else {
+    if (host.dataset.opened === '1') {
       host.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    btn.classList.add('btn-loading');
+    btn.setAttribute('disabled', 'true');
+    const start = performance.now();
+    try {
+      await waitForCalendly();
+      // Pre-render the host off-screen so iframe gets correct dimensions while loading
+      host.classList.add('preloading');
+      window.Calendly.initInlineWidget({ url: host.dataset.calendlyUrl, parentElement: host });
+      host.dataset.opened = '1';
+      // Wait for MIN delay (so the iframe has time to fully render)
+      const elapsed = performance.now() - start;
+      const remaining = Math.max(0, CAL_MIN_DELAY - elapsed);
+      await wait(remaining);
+      // Reveal the host inline
+      host.classList.remove('preloading');
+      host.classList.add('open');
+      btn.classList.remove('btn-loading');
+      btn.removeAttribute('disabled');
+      setTimeout(() => host.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+    } catch (err) {
+      btn.classList.remove('btn-loading');
+      btn.removeAttribute('disabled');
+      host.classList.remove('preloading');
+      host.classList.add('open');
+      host.innerHTML = '<div class="cal-loading">Takvim yüklenemedi.<a class="err-link" href="' + fallbackUrl + '" target="_blank" rel="noopener">Calendly\'de aç</a></div>';
     }
   };
   document.querySelectorAll('[data-cal-target]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      openCal(btn.dataset.calTarget);
+      openCal(btn.dataset.calTarget, btn);
     });
   });
 </script>
