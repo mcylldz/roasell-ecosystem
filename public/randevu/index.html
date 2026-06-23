@@ -22,7 +22,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
-<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <style>
   :root {
     --bg-primary: #0a0a0a;
@@ -321,24 +320,60 @@
   .tl-body h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin-bottom: 6px; }
   .tl-body p { color: var(--text-secondary); font-size: 0.93rem; line-height: 1.5; }
 
-  /* Calendly inline */
-  .calendly-host { display: none; }
-  .calendly-host.open {
-    display: block; width: 100%; max-width: 920px;
-    height: 700px; margin: 16px auto 0;
-    border-radius: 12px; overflow: hidden;
-    scroll-margin-top: 84px;
+  /* Lead form (Calendly yerine) */
+  .form-host { display: none; }
+  .form-host.open {
+    display: block; width: 100%; max-width: 520px;
+    margin: 24px auto 0;
+    scroll-margin-top: 100px;
   }
-  .calendly-host.open iframe { width: 100%; height: 100%; border: 0; display: block; }
-  .calendly-host .cal-loading {
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-secondary); font-size: 0.95rem;
-    height: 100%; border: 1px solid var(--border); border-radius: 12px;
+  .lead-form {
+    text-align: left;
     background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
   }
-  .calendly-host .cal-loading .err-link { color: var(--gold); margin-left: 6px; text-decoration: underline; }
+  .lead-form .lf-field { margin-bottom: 16px; }
+  .lead-form label {
+    display: block; font-size: 0.85rem; font-weight: 500;
+    color: var(--text-secondary); margin-bottom: 7px;
+  }
+  .lead-form input {
+    width: 100%; box-sizing: border-box;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 13px 14px; color: var(--text-primary);
+    font-family: inherit; font-size: 1rem;
+    transition: border-color 0.18s ease, background 0.18s ease;
+  }
+  .lead-form input::placeholder { color: rgba(255,255,255,0.3); }
+  .lead-form input:focus {
+    outline: none; border-color: var(--gold);
+    background: rgba(255,255,255,0.05);
+  }
+  .lead-form input.invalid { border-color: #e06666; }
+  .lead-form .btn { width: 100%; margin-top: 6px; }
+  .lead-form .btn[disabled] { opacity: 0.6; cursor: default; }
+  .lead-form .lf-msg {
+    margin-top: 14px; font-size: 0.92rem; text-align: center;
+    min-height: 1px;
+  }
+  .lead-form .lf-msg.ok { color: var(--gold); }
+  .lead-form .lf-msg.err { color: #e06666; }
+  .lead-form.sent .lf-fields, .lead-form.sent .btn { display: none; }
+  .lead-form .lf-success {
+    display: none; text-align: center; padding: 8px 0;
+  }
+  .lead-form.sent .lf-success { display: block; }
+  .lead-form .lf-success h3 {
+    font-family: var(--font-display); color: var(--gold);
+    font-size: 1.25rem; margin-bottom: 8px;
+  }
+  .lead-form .lf-success p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; }
   @media (max-width: 768px) {
-    .calendly-host.open { height: 680px; margin: 12px auto 0; }
+    .form-host.open { margin: 16px auto 0; }
+    .lead-form { padding: 22px 18px; }
   }
   /* When any host is open, hero collapses its centered min-height
      so the calendar appears right below the button (no extra gap) */
@@ -667,7 +702,30 @@
     <h1 class="reveal">Bahaneler Artık <em class="gold">Geride Kalsın</em></h1>
     <p class="sub reveal reveal-delay-1">8 yıldır Türkiye, Avrupa ve Amerika'da markalar kuruyoruz. Şimdi bu deneyimi <span style="color:var(--text-primary);font-weight:500;">RoaSell Ekosistemi</span> ile seninle paylaşıyoruz.</p>
     <button type="button" class="btn btn-primary cta-open reveal reveal-delay-2" data-cal-target="cal-hero">Ücretsiz Randevu Al →</button>
-    <div id="cal-hero" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-hero" class="form-host">
+      <form class="lead-form" novalidate>
+        <div class="lf-fields">
+          <div class="lf-field">
+            <label>Ad Soyad</label>
+            <input type="text" name="name" placeholder="Adınız ve soyadınız" autocomplete="name" required />
+          </div>
+          <div class="lf-field">
+            <label>E-posta</label>
+            <input type="email" name="email" placeholder="ornek@mail.com" autocomplete="email" required />
+          </div>
+          <div class="lf-field">
+            <label>Telefon</label>
+            <input type="tel" name="phone" placeholder="05XX XXX XX XX" autocomplete="tel" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Randevu Talebini Gönder →</button>
+        </div>
+        <div class="lf-success">
+          <h3>Teşekkürler! 🎉</h3>
+          <p>Talebini aldık. Ekibimiz en kısa sürede seninle iletişime geçecek.</p>
+        </div>
+        <div class="lf-msg" aria-live="polite"></div>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -737,7 +795,30 @@
         </div>
       </div>
     </div>
-    <div id="cal-calc" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-calc" class="form-host">
+      <form class="lead-form" novalidate>
+        <div class="lf-fields">
+          <div class="lf-field">
+            <label>Ad Soyad</label>
+            <input type="text" name="name" placeholder="Adınız ve soyadınız" autocomplete="name" required />
+          </div>
+          <div class="lf-field">
+            <label>E-posta</label>
+            <input type="email" name="email" placeholder="ornek@mail.com" autocomplete="email" required />
+          </div>
+          <div class="lf-field">
+            <label>Telefon</label>
+            <input type="tel" name="phone" placeholder="05XX XXX XX XX" autocomplete="tel" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Randevu Talebini Gönder →</button>
+        </div>
+        <div class="lf-success">
+          <h3>Teşekkürler! 🎉</h3>
+          <p>Talebini aldık. Ekibimiz en kısa sürede seninle iletişime geçecek.</p>
+        </div>
+        <div class="lf-msg" aria-live="polite"></div>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -905,7 +986,30 @@
     <p class="sub reveal reveal-delay-1">30 dakikalık ücretsiz görüşme — tek bir 30 dakikalık görüşme sana bir anda çok şey kazandırır mı bilmiyoruz ama kaybettirmeyeceği kesin.</p>
     <button type="button" class="btn btn-primary large cta-open reveal reveal-delay-2" data-cal-target="cal-final">Hemen Görüşme Al →</button>
     <div class="urgency reveal reveal-delay-3"><span class="mark">●</span>Kontenjan sınırlıdır — Her hafta sadece belirli sayıda görüşme yapılıyor</div>
-    <div id="cal-final" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-final" class="form-host">
+      <form class="lead-form" novalidate>
+        <div class="lf-fields">
+          <div class="lf-field">
+            <label>Ad Soyad</label>
+            <input type="text" name="name" placeholder="Adınız ve soyadınız" autocomplete="name" required />
+          </div>
+          <div class="lf-field">
+            <label>E-posta</label>
+            <input type="email" name="email" placeholder="ornek@mail.com" autocomplete="email" required />
+          </div>
+          <div class="lf-field">
+            <label>Telefon</label>
+            <input type="tel" name="phone" placeholder="05XX XXX XX XX" autocomplete="tel" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Randevu Talebini Gönder →</button>
+        </div>
+        <div class="lf-success">
+          <h3>Teşekkürler! 🎉</h3>
+          <p>Talebini aldık. Ekibimiz en kısa sürede seninle iletişime geçecek.</p>
+        </div>
+        <div class="lf-msg" aria-live="polite"></div>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -1062,43 +1166,83 @@
   };
   initVideoUnmute();
 
-  // Calendly inline embed — anında aç, gecikme/spinner yok
-  const fallbackUrl = 'https://calendly.com/roasell/roasell-analiz-gorusmesi';
-  const waitForCalendly = (timeoutMs = 8000) => new Promise((resolve, reject) => {
-    if (window.Calendly && typeof window.Calendly.initInlineWidget === 'function') return resolve();
-    const start = performance.now();
-    const t = setInterval(() => {
-      if (window.Calendly && typeof window.Calendly.initInlineWidget === 'function') {
-        clearInterval(t); resolve();
-      } else if (performance.now() - start > timeoutMs) {
-        clearInterval(t); reject(new Error('Calendly yüklenemedi'));
-      }
-    }, 80);
-  });
-  const openCal = async (id) => {
+  // Randevu formu — butona basınca formu aç, gönderince Google Sheets'e yaz
+  // NOT: Apps Script "Web App" deploy URL'inizi buraya yapıştırın (/exec ile biten).
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzLQ6dGzgZd2sAhwBM3YupJkrM1qxpuVV5BM_p4uVwuDOzplLyOkEES9D77MKiHmrtteA/exec';
+
+  const openForm = (id) => {
     const host = document.getElementById(id);
     if (!host) return;
-    if (host.dataset.opened === '1') {
+    if (!host.classList.contains('open')) {
+      host.classList.add('open');
+      document.body.classList.add('cal-open');
+    }
+    setTimeout(() => {
       host.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
-    }
-    // Open host immediately so the calendar appears right under the button
-    host.classList.add('open');
-    document.body.classList.add('cal-open');
-    try {
-      await waitForCalendly();
-      window.Calendly.initInlineWidget({ url: host.dataset.calendlyUrl, parentElement: host });
-      host.dataset.opened = '1';
-    } catch (err) {
-      host.innerHTML = '<div class="cal-loading">Takvim yüklenemedi.<a class="err-link" href="' + fallbackUrl + '" target="_blank" rel="noopener">Calendly\'de aç</a></div>';
-    }
-    setTimeout(() => host.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+      const first = host.querySelector('input');
+      if (first) first.focus({ preventScroll: true });
+    }, 80);
   };
   document.querySelectorAll('[data-cal-target]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      openCal(btn.dataset.calTarget);
+      openForm(btn.dataset.calTarget);
+    });
+  });
+
+  const phoneOk = (v) => v.replace(/\D/g, '').length >= 10;
+  document.querySelectorAll('.lead-form').forEach(form => {
+    const msg = form.querySelector('.lf-msg');
+    const btn = form.querySelector('button[type="submit"]');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.className = 'lf-msg';
+      msg.textContent = '';
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
+
+      // Doğrulama
+      let bad = null;
+      form.querySelectorAll('input').forEach(i => i.classList.remove('invalid'));
+      if (!name) bad = bad || form.name;
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) bad = bad || form.email;
+      if (!phoneOk(phone)) bad = bad || form.phone;
+      if (bad) {
+        bad.classList.add('invalid'); bad.focus();
+        msg.className = 'lf-msg err';
+        msg.textContent = 'Lütfen bilgileri eksiksiz ve doğru girin.';
+        return;
+      }
+
+      btn.disabled = true;
+      const oldLabel = btn.textContent;
+      btn.textContent = 'Gönderiliyor…';
+      try {
+        // text/plain → Apps Script'te basit CORS preflight'ı tetiklemez
+        await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            name, email, phone,
+            page: 'randevu',
+            ts: new Date().toISOString(),
+            ua: navigator.userAgent
+          })
+        });
+        // no-cors yanıtı okunamaz; başarı kabul edilir
+        form.classList.add('sent');
+        if (window.ym) try { window.ym(109599095, 'reachGoal', 'randevu_form'); } catch (_) {}
+        if (window.fbq) try { window.fbq('track', 'Lead'); } catch (_) {}
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = oldLabel;
+        msg.className = 'lf-msg err';
+        msg.textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+      }
     });
   });
 </script>
