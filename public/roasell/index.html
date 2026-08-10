@@ -1210,6 +1210,51 @@
     });
   });
 
+  // --- Meta Lead: tarayıcı Pixel + sunucu (Conversions API) ikili gönderim ---
+  // Aynı event_id ile gittiği için Meta iki kaydı tekilleştirir; reklam engelleyici
+  // pixel'i bloklasa bile sunucu tarafı olayı ulaşır.
+  const CAPI_WEBHOOK = 'https://dtt1z7t3.rcsrv.com/webhook/meeting';
+  const getCookie = (name) => {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.*+?^${}()|[\]\\])/g, '\\$1') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : '';
+  };
+  const computeFBC = () => {
+    const c = getCookie('_fbc'); if (c) return c;
+    const fbclid = new URLSearchParams(location.search).get('fbclid');
+    return fbclid ? 'fb.1.' + Math.floor(Date.now() / 1000) + '.' + fbclid : '';
+  };
+  const trackLead = (lead) => {
+    const event_id = 'lead-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+
+    // 1) Tarayıcı Pixel
+    if (window.fbq) try {
+      window.fbq('track', 'Lead', { content_name: 'roasell-form' }, { eventID: event_id });
+    } catch (_) {}
+
+    // 2) Sunucu tarafı (n8n → Meta Conversions API)
+    const data = {
+      event_name: 'Lead',
+      event_id,
+      event_time: Math.floor(Date.now() / 1000),
+      fbp: getCookie('_fbp'),
+      fbc: computeFBC(),
+      ua: navigator.userAgent || '',
+      url: location.href.split('?')[0],
+      ref: document.referrer || '',
+      // n8n tarafında SHA-256'ya çevrilecek (Meta ham PII kabul etmez)
+      email: lead.email || '',
+      phone: lead.phone || '',
+      name: lead.name || ''
+    };
+    try {
+      const img = new Image();
+      img.src = CAPI_WEBHOOK + '?' + new URLSearchParams(data).toString();
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(CAPI_WEBHOOK, new Blob([JSON.stringify(data)], { type: 'text/plain' }));
+      }
+    } catch (_) {}
+  };
+
   const phoneOk = (v) => v.replace(/\D/g, '').length >= 10;
   document.querySelectorAll('.lead-form').forEach(form => {
     const msg = form.querySelector('.lf-msg');
@@ -1239,6 +1284,14 @@
       btn.disabled = true;
       const oldLabel = btn.textContent;
       btn.textContent = 'Gönderiliyor…';
+
+      // Dönüşümü fetch'ten ÖNCE bildir: ağ hatası/sekme kapanması olayı yutmasın
+      if (!form.dataset.tracked) {
+        form.dataset.tracked = '1';
+        if (window.ym) try { window.ym(109599095, 'reachGoal', 'roasell_form'); } catch (_) {}
+        trackLead({ name, email, phone });
+      }
+
       try {
         // text/plain → Apps Script'te basit CORS preflight'ı tetiklemez
         await fetch(FORM_ENDPOINT, {
@@ -1254,8 +1307,6 @@
         });
         // no-cors yanıtı okunamaz; başarı kabul edilir
         form.classList.add('sent');
-        if (window.ym) try { window.ym(109599095, 'reachGoal', 'roasell_form'); } catch (_) {}
-        if (window.fbq) try { window.fbq('track', 'Lead'); } catch (_) {}
       } catch (err) {
         btn.disabled = false;
         btn.textContent = oldLabel;

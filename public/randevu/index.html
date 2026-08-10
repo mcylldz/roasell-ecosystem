@@ -684,9 +684,28 @@
     .final-cta { padding: 60px 0; }
   }
 </style>
+
+<!-- Meta Pixel base -->
+<link rel="preconnect" href="https://connect.facebook.net">
+<script>
+  !function (f, b, e, v, n, t, s) {
+    if (f.fbq) return; n = f.fbq = function () {
+      n.callMethod ?
+        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+    }; if (!f._fbq) f._fbq = n;
+    n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0;
+    t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s)
+  }
+    (window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('init', '170135295273206');
+  fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel base -->
 </head>
 <body>
 <noscript><div><img src="https://mc.yandex.ru/watch/109599095" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=170135295273206&ev=PageView&noscript=1" /></noscript>
 
 <!-- 1. NAVBAR -->
 <header class="nav" id="nav">
@@ -1191,6 +1210,51 @@
     });
   });
 
+  // --- Meta dönüşüm takibi ---
+  // Tarayıcı Pixel'inin Lead olayı teşekkür sayfasında atılır: yönlendirme sırasında
+  // iptal edilme riski olmaz ve URL tabanlı özel dönüşüm de aynı sayfaya bağlanır.
+  // Buradan sadece sunucu tarafı (CAPI) kopyası gider; sendBeacon sayfa değişse de tamamlanır.
+  // İki kayıt aynı event_id'yi taşır, Meta tekilleştirir.
+  const THANKYOU_URL = '/randevu/tesekkurler/';
+  const CAPI_WEBHOOK = 'https://dtt1z7t3.rcsrv.com/webhook/meeting';
+  const getCookie = (name) => {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.*+?^${}()|[\]\\])/g, '\\$1') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : '';
+  };
+  const computeFBC = () => {
+    const c = getCookie('_fbc'); if (c) return c;
+    const fbclid = new URLSearchParams(location.search).get('fbclid');
+    return fbclid ? 'fb.1.' + Math.floor(Date.now() / 1000) + '.' + fbclid : '';
+  };
+  const trackLead = (lead) => {
+    const event_id = 'lead-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+
+    // Sunucu tarafı (n8n → Meta Conversions API)
+    const data = {
+      event_name: 'Lead',
+      event_id,
+      event_time: Math.floor(Date.now() / 1000),
+      fbp: getCookie('_fbp'),
+      fbc: computeFBC(),
+      ua: navigator.userAgent || '',
+      url: location.href.split('?')[0],
+      ref: document.referrer || '',
+      // n8n tarafında SHA-256'ya çevrilecek (Meta ham PII kabul etmez)
+      email: lead.email || '',
+      phone: lead.phone || '',
+      name: lead.name || ''
+    };
+    try {
+      const img = new Image();
+      img.src = CAPI_WEBHOOK + '?' + new URLSearchParams(data).toString();
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(CAPI_WEBHOOK, new Blob([JSON.stringify(data)], { type: 'text/plain' }));
+      }
+    } catch (_) {}
+
+    return event_id;
+  };
+
   const phoneOk = (v) => v.replace(/\D/g, '').length >= 10;
   document.querySelectorAll('.lead-form').forEach(form => {
     const msg = form.querySelector('.lf-msg');
@@ -1220,6 +1284,15 @@
       btn.disabled = true;
       const oldLabel = btn.textContent;
       btn.textContent = 'Gönderiliyor…';
+
+      // Sunucu tarafı dönüşümü fetch'ten ÖNCE bildir: ağ hatası olayı yutmasın
+      let eventId = form.dataset.eventId || '';
+      if (!eventId) {
+        if (window.ym) try { window.ym(109599095, 'reachGoal', 'randevu_form'); } catch (_) {}
+        eventId = trackLead({ name, email, phone });
+        form.dataset.eventId = eventId;
+      }
+
       try {
         // text/plain → Apps Script'te basit CORS preflight'ı tetiklemez
         await fetch(FORM_ENDPOINT, {
@@ -1235,8 +1308,9 @@
         });
         // no-cors yanıtı okunamaz; başarı kabul edilir
         form.classList.add('sent');
-        if (window.ym) try { window.ym(109599095, 'reachGoal', 'randevu_form'); } catch (_) {}
-        if (window.fbq) try { window.fbq('track', 'Lead'); } catch (_) {}
+        // Teşekkür sayfasına geç — Lead olayı ve URL tabanlı özel dönüşüm orada tetiklenir.
+        // eid: tarayıcı Pixel'i ile yukarıdaki sunucu olayının tekilleştirilmesi için.
+        location.assign(THANKYOU_URL + '?eid=' + encodeURIComponent(eventId));
       } catch (err) {
         btn.disabled = false;
         btn.textContent = oldLabel;
