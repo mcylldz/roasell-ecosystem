@@ -183,6 +183,37 @@
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%; border: 0; display: block;
   }
+
+  /* Thumbnail — oynatıcı ancak tıklanınca yüklenir */
+  .hv-poster {
+    position: relative; display: block; width: 100%;
+    padding: 56.25% 0 0; margin: 0;
+    border: 0; border-radius: 11px; overflow: hidden;
+    background: #000; cursor: pointer;
+  }
+  .hv-poster img {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .6s ease, opacity .3s ease;
+  }
+  .hv-poster:hover img { transform: scale(1.03); opacity: 0.8; }
+  .hv-play {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(58px, 9vw, 86px); height: clamp(58px, 9vw, 86px);
+    border-radius: 50%; background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.6);
+    transition: transform .25s ease, background .25s ease;
+  }
+  .hv-poster:hover .hv-play { transform: translate(-50%, -50%) scale(1.09); background: var(--gold-light); }
+  .hv-play svg { width: 38%; height: 38%; fill: #0a0a0a; margin-left: 8%; }
+  .hv-time {
+    position: absolute; right: 12px; bottom: 12px;
+    font-family: var(--font-mono); font-size: 0.72rem;
+    color: #eeeeee; background: rgba(0, 0, 0, 0.68);
+    padding: 4px 9px; border-radius: 6px; letter-spacing: 0.04em;
+  }
   @keyframes heroVideoGlow {
     0%, 100% {
       border-color: rgba(201, 168, 76, 0.42);
@@ -752,11 +783,13 @@
     <h1 class="reveal">Bahaneler Artık <em class="gold">Geride Kalsın</em></h1>
     <p class="sub reveal reveal-delay-1">8 yıldır Türkiye, Avrupa ve Amerika'da markalar kuruyoruz. Şimdi bu deneyimi <span style="color:var(--text-primary);font-weight:500;">RoaSell Ekosistemi</span> ile seninle paylaşıyoruz.</p>
     <div class="hero-video reveal reveal-delay-2">
-      <div class="hv-frame">
-        <iframe src="https://player.vimeo.com/video/1218901671?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
-          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-          referrerpolicy="strict-origin-when-cross-origin" title="Funnel" loading="lazy"></iframe>
-      </div>
+      <button type="button" class="hv-poster" aria-label="Tanıtım videosunu oynat">
+        <img src="/assets/randevu-b-poster.jpg" alt="" fetchpriority="high" />
+        <span class="hv-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+        </span>
+        <span class="hv-time">11:58</span>
+      </button>
     </div>
     <button type="button" class="btn btn-primary cta-open reveal reveal-delay-2" data-cal-target="cal-hero">Ücretsiz Randevu Al →</button>
     <div id="cal-hero" class="form-host">
@@ -1222,6 +1255,23 @@
     });
   };
   initVideoUnmute();
+
+  // Hero videosu — thumbnail'e tıklanınca Vimeo oynatıcı yüklenip sesli başlar.
+  // Oynatıcıyı açılışta yüklemediğimiz için sayfa belirgin şekilde hızlı açılıyor.
+  const heroPoster = document.querySelector('.hv-poster');
+  if (heroPoster) {
+    heroPoster.addEventListener('click', () => {
+      const frame = document.createElement('div');
+      frame.className = 'hv-frame';
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://player.vimeo.com/video/1218901671?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1';
+      iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share');
+      iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      iframe.setAttribute('title', 'Funnel');
+      frame.appendChild(iframe);
+      heroPoster.replaceWith(frame);
+    });
+  }
 
   // Randevu formu — butona basınca formu aç, gönderince Google Sheets'e yaz
   // NOT: Apps Script "Web App" deploy URL'inizi buraya yapıştırın (/exec ile biten).
