@@ -140,12 +140,8 @@
     min-height: 100vh; padding: 140px 0 80px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; position: relative; overflow: hidden;
-    background-image:
-      linear-gradient(180deg, rgba(10,10,10,0.62) 0%, rgba(10,10,10,0.55) 45%, rgba(10,10,10,0.88) 85%, var(--bg-primary) 100%),
-      url('/assets/hero.jpg');
-    background-size: cover, cover;
-    background-position: center, center 35%;
-    background-repeat: no-repeat, no-repeat;
+    /* Banner görseli kaldırıldı — odak videoda kalsın diye düz koyu zemin */
+    background: linear-gradient(180deg, #101010 0%, #0c0c0c 55%, var(--bg-primary) 100%);
   }
   .hero::after {
     content: ''; position: absolute; top: -10%; right: -10%;
@@ -171,15 +167,34 @@
     width: 100%; max-width: 760px;
     margin: 0 auto 36px;
     border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    padding: 3px;
     background: #000;
+    border: 1px solid var(--gold);
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.6),
+      0 0 34px rgba(201, 168, 76, 0.18);
+    animation: heroVideoGlow 4s ease-in-out infinite;
   }
-  .hero-video .hv-frame { position: relative; padding-top: 56.25%; }
+  .hero-video .hv-frame {
+    position: relative; padding-top: 56.25%;
+    border-radius: 11px; overflow: hidden;
+  }
   .hero-video iframe {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%; border: 0; display: block;
+  }
+  @keyframes heroVideoGlow {
+    0%, 100% {
+      border-color: rgba(201, 168, 76, 0.42);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 26px rgba(201,168,76,0.14);
+    }
+    50% {
+      border-color: rgba(232, 212, 139, 0.95);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 58px rgba(201,168,76,0.38);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-video { animation: none; border-color: var(--gold); }
   }
 
   /* Marquee */
