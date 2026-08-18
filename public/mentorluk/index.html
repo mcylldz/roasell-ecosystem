@@ -1498,6 +1498,7 @@
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify(Object.assign({}, lead, {
                 page: 'mentorluk',
+                status: 'aranacak',
                 ts: new Date().toISOString(),
                 ua: navigator.userAgent
               }))
