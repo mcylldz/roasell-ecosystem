@@ -782,7 +782,7 @@
   .ds-timer {
     display: inline-flex; align-items: center; gap: 8px;
     border: 1px solid rgba(201,168,76,0.25); border-radius: 999px;
-    background: rgba(201,168,76,0.06); padding: 9px 18px; margin-bottom: 20px;
+    background: rgba(201,168,76,0.06); padding: 9px 18px; margin: 0 0 22px;
     font-size: 0.85rem; color: var(--text-secondary);
   }
   .ds-clock {
@@ -790,7 +790,7 @@
     color: var(--gold); font-variant-numeric: tabular-nums;
   }
 
-  .ds-expired { display: none; margin-bottom: 20px; }
+  .ds-expired { display: none; margin: 0 0 22px; }
   .ds-expired-badge {
     display: inline-block; font-family: var(--font-mono); font-size: 0.78rem;
     letter-spacing: 0.06em; color: var(--text-muted);
@@ -1500,6 +1500,12 @@
 
     <!-- Adım 1: teklif -->
     <div class="ds-step is-active" data-step="1">
+      <div class="ds-timer">
+        <span>Bu teklif yalnızca</span>
+        <span class="ds-clock">--:--</span>
+        <span>geçerli</span>
+      </div>
+      <div class="ds-expired"><span class="ds-expired-badge">Teklif süresi doldu</span></div>
       <h2 class="ds-title" id="ds-title-1">Bekle — Sana Özel Bir Teklifimiz Var</h2>
       <p class="ds-intro"></p>
 
@@ -1512,13 +1518,6 @@
       <ul class="ds-features"></ul>
 
       <p class="ds-closing"></p>
-
-      <div class="ds-timer">
-        <span>Bu teklif yalnızca</span>
-        <span class="ds-clock">--:--</span>
-        <span>geçerli</span>
-      </div>
-      <div class="ds-expired"><span class="ds-expired-badge">Teklif süresi doldu</span></div>
 
       <button type="button" class="btn btn-primary ds-buy">Hemen Satın Al →</button>
       <button type="button" class="ds-decline ds-dismiss">Hayır, teşekkürler</button>
