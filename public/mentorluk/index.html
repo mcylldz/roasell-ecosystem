@@ -380,7 +380,7 @@
     color: var(--text-primary) !important; margin-bottom: 16px !important;
     line-height: 1.4;
   }
-  .qform input, .qform textarea, .qform select {
+  .qform input, .qform textarea {
     width: 100%; box-sizing: border-box;
     background: rgba(255,255,255,0.03);
     border: 1px solid var(--border); border-radius: 10px;
@@ -390,18 +390,10 @@
   }
   .qform textarea { resize: vertical; min-height: 104px; line-height: 1.5; }
   .qform input::placeholder, .qform textarea::placeholder { color: rgba(255,255,255,0.3); }
-  .qform input:focus, .qform textarea:focus, .qform select:focus {
+  .qform input:focus, .qform textarea:focus {
     outline: none; border-color: var(--gold); background: rgba(255,255,255,0.05);
   }
   .qform .invalid { border-color: #e06666; }
-
-  .qf-phone { display: flex; gap: 8px; }
-  .qf-phone select {
-    flex: 0 0 128px; padding-right: 8px; cursor: pointer;
-    font-size: 0.92rem;
-  }
-  .qf-phone select option { background: var(--bg-card); color: var(--text-primary); }
-  .qf-phone input { flex: 1; min-width: 0; }
 
   .qform .btn { width: 100%; margin-top: 6px; }
   .qform .btn[disabled] { opacity: 0.6; cursor: default; }
@@ -446,7 +438,6 @@
 
   @media (max-width: 520px) {
     .qform { padding: 22px 18px; }
-    .qf-phone select { flex: 0 0 108px; font-size: 0.86rem; }
   }
 
   /* When any host is open, hero collapses its centered min-height
@@ -809,31 +800,7 @@
           </div>
           <div class="qf-field">
             <label>Telefon</label>
-            <div class="qf-phone">
-              <select name="dial" aria-label="Ülke kodu">
-            <option value="+90" selected>+90 Türkiye</option>
-            <option value="+49">+49 Almanya</option>
-            <option value="+31">+31 Hollanda</option>
-            <option value="+32">+32 Belçika</option>
-            <option value="+43">+43 Avusturya</option>
-            <option value="+41">+41 İsviçre</option>
-            <option value="+44">+44 İngiltere</option>
-            <option value="+33">+33 Fransa</option>
-            <option value="+1">+1 ABD / Kanada</option>
-            <option value="+994">+994 Azerbaycan</option>
-            <option value="+7">+7 Rusya / Kazakistan</option>
-            <option value="+971">+971 BAE</option>
-            <option value="+966">+966 S. Arabistan</option>
-            <option value="+39">+39 İtalya</option>
-            <option value="+34">+34 İspanya</option>
-            <option value="+46">+46 İsveç</option>
-            <option value="+45">+45 Danimarka</option>
-            <option value="+47">+47 Norveç</option>
-            <option value="+380">+380 Ukrayna</option>
-            <option value="+998">+998 Özbekistan</option>
-              </select>
-              <input type="tel" name="phone" placeholder="5XX XXX XX XX" autocomplete="tel" />
-            </div>
+            <input type="tel" name="phone" placeholder="+90 5XX XXX XX XX" autocomplete="tel" />
           </div>
           <div class="qf-field">
             <label>E-posta</label>
@@ -952,31 +919,7 @@
           </div>
           <div class="qf-field">
             <label>Telefon</label>
-            <div class="qf-phone">
-              <select name="dial" aria-label="Ülke kodu">
-            <option value="+90" selected>+90 Türkiye</option>
-            <option value="+49">+49 Almanya</option>
-            <option value="+31">+31 Hollanda</option>
-            <option value="+32">+32 Belçika</option>
-            <option value="+43">+43 Avusturya</option>
-            <option value="+41">+41 İsviçre</option>
-            <option value="+44">+44 İngiltere</option>
-            <option value="+33">+33 Fransa</option>
-            <option value="+1">+1 ABD / Kanada</option>
-            <option value="+994">+994 Azerbaycan</option>
-            <option value="+7">+7 Rusya / Kazakistan</option>
-            <option value="+971">+971 BAE</option>
-            <option value="+966">+966 S. Arabistan</option>
-            <option value="+39">+39 İtalya</option>
-            <option value="+34">+34 İspanya</option>
-            <option value="+46">+46 İsveç</option>
-            <option value="+45">+45 Danimarka</option>
-            <option value="+47">+47 Norveç</option>
-            <option value="+380">+380 Ukrayna</option>
-            <option value="+998">+998 Özbekistan</option>
-              </select>
-              <input type="tel" name="phone" placeholder="5XX XXX XX XX" autocomplete="tel" />
-            </div>
+            <input type="tel" name="phone" placeholder="+90 5XX XXX XX XX" autocomplete="tel" />
           </div>
           <div class="qf-field">
             <label>E-posta</label>
@@ -1193,31 +1136,7 @@
           </div>
           <div class="qf-field">
             <label>Telefon</label>
-            <div class="qf-phone">
-              <select name="dial" aria-label="Ülke kodu">
-            <option value="+90" selected>+90 Türkiye</option>
-            <option value="+49">+49 Almanya</option>
-            <option value="+31">+31 Hollanda</option>
-            <option value="+32">+32 Belçika</option>
-            <option value="+43">+43 Avusturya</option>
-            <option value="+41">+41 İsviçre</option>
-            <option value="+44">+44 İngiltere</option>
-            <option value="+33">+33 Fransa</option>
-            <option value="+1">+1 ABD / Kanada</option>
-            <option value="+994">+994 Azerbaycan</option>
-            <option value="+7">+7 Rusya / Kazakistan</option>
-            <option value="+971">+971 BAE</option>
-            <option value="+966">+966 S. Arabistan</option>
-            <option value="+39">+39 İtalya</option>
-            <option value="+34">+34 İspanya</option>
-            <option value="+46">+46 İsveç</option>
-            <option value="+45">+45 Danimarka</option>
-            <option value="+47">+47 Norveç</option>
-            <option value="+380">+380 Ukrayna</option>
-            <option value="+998">+998 Özbekistan</option>
-              </select>
-              <input type="tel" name="phone" placeholder="5XX XXX XX XX" autocomplete="tel" />
-            </div>
+            <input type="tel" name="phone" placeholder="+90 5XX XXX XX XX" autocomplete="tel" />
           </div>
           <div class="qf-field">
             <label>E-posta</label>
@@ -1424,8 +1343,8 @@
   });
   // Ön eleme formu — CTA'ya basınca Calendly yerine önce bu form açılır.
   // 3 adım: iletişim → e-ticaret deneyimi → bütçe. Bütçe seçimi akışı bitirir:
-  // 3000$+ ise Calendly takvimi açılır, diğerlerinde teşekkür mesajı gösterilir.
-  // Her iki durumda da tüm cevaplar Google Sheets'e yazılır.
+  // 3000$+ ise Calendly takvimi açılır (sheet'e yazılmaz, randevu akışına girer),
+  // diğerlerinde cevaplar Google Sheets'e yazılıp teşekkür mesajı gösterilir.
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzLQ6dGzgZd2sAhwBM3YupJkrM1qxpuVV5BM_p4uVwuDOzplLyOkEES9D77MKiHmrtteA/exec';
   const QUALIFIED = '3000$+';
 
@@ -1470,7 +1389,7 @@
   };
 
   const emailOk = (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
-  const phoneOk = (v) => v.replace(/\D/g, '').length >= 7;
+  const phoneOk = (v) => v.replace(/\D/g, '').length >= 10;
 
   document.querySelectorAll('.qform').forEach(form => {
     const host = form.closest('.funnel-host');
@@ -1537,12 +1456,14 @@
       opt.addEventListener('click', async () => {
         const budget = opt.dataset.value;
         form.querySelectorAll('.qf-opt').forEach(o => { o.disabled = true; });
-        msg.className = 'qf-msg'; msg.textContent = 'Kaydediliyor…';
+        const qualified = budget === QUALIFIED;
+        msg.className = 'qf-msg';
+        msg.textContent = qualified ? 'Takvim açılıyor…' : 'Kaydediliyor…';
 
         const lead = {
           name: form.name.value.trim(),
           email: form.email.value.trim(),
-          phone: form.dial.value + ' ' + form.phone.value.trim(),
+          phone: form.phone.value.trim(),
           experience: form.experience.value.trim(),
           budget: budget
         };
@@ -1557,28 +1478,32 @@
           } catch (_) {}
         }
 
-        try {
-          // text/plain → Apps Script'te CORS preflight tetiklemez
-          await fetch(FORM_ENDPOINT, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(Object.assign({}, lead, {
-              page: 'mentorluk',
-              ts: new Date().toISOString(),
-              ua: navigator.userAgent
-            }))
-          });
-        } catch (_) {
-          // no-cors yanıtı okunamaz; ağ hatasında da akışa devam ediyoruz ki
-          // kullanıcı formun başına dönmesin
+        // Sheet'e yalnızca Calendly'ye yönlendirilmeyenler yazılır;
+        // 3000$+ seçenler zaten randevu akışına giriyor.
+        if (!qualified) {
+          try {
+            // text/plain → Apps Script'te CORS preflight tetiklemez
+            await fetch(FORM_ENDPOINT, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(Object.assign({}, lead, {
+                page: 'mentorluk',
+                ts: new Date().toISOString(),
+                ua: navigator.userAgent
+              }))
+            });
+          } catch (_) {
+            // no-cors yanıtı okunamaz; ağ hatasında da akışa devam ediyoruz ki
+            // kullanıcı formun başına dönmesin
+          }
         }
 
         msg.className = 'qf-msg'; msg.textContent = '';
         steps.forEach(s => s.classList.remove('is-active'));
         if (bar) bar.style.width = '100%';
 
-        if (budget === QUALIFIED) {
+        if (qualified) {
           form.classList.add('done-hidden');
           openCalendar(host, lead);
         } else {
