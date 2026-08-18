@@ -1346,7 +1346,16 @@
   // 3000$+ ise Calendly takvimi açılır (sheet'e yazılmaz, randevu akışına girer),
   // diğerlerinde cevaplar Google Sheets'e yazılıp teşekkür mesajı gösterilir.
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzLQ6dGzgZd2sAhwBM3YupJkrM1qxpuVV5BM_p4uVwuDOzplLyOkEES9D77MKiHmrtteA/exec';
+  // Randevu almadan ayrılan 3000$+ kişiler buraya yazılır. Ayrı bir Apps Script
+  // deploy URL'si verilirse bu sabiti değiştirmek yeterli.
+  const DROPOFF_ENDPOINT = FORM_ENDPOINT;
   const QUALIFIED = '3000$+';
+
+  // 3000$+ seçip takvime giden kişi; randevu alırsa booked=true olur ve
+  // sayfadan ayrılırken kayıt gönderilmez.
+  let pendingDrop = null;
+  let booked = false;
+  let dropSent = false;
 
   const openFunnel = (id) => {
     const host = document.getElementById(id);
@@ -1504,6 +1513,10 @@
         if (bar) bar.style.width = '100%';
 
         if (qualified) {
+          pendingDrop = Object.assign({}, lead, {
+            page: 'mentorluk-randevu-almadi',
+            status: 'randevu almadı'
+          });
           form.classList.add('done-hidden');
           openCalendar(host, lead);
         } else {
@@ -1515,6 +1528,23 @@
     render();
   });
 
+  // Takvim açıldı ama randevu alınmadan sayfadan çıkıldı → ayrı sayfaya yaz.
+  // pagehide sekme değiştirmede tetiklenmez, yalnızca gerçekten ayrılırken;
+  // bu yüzden yanlış "randevu almadı" kaydı oluşmaz.
+  window.addEventListener('pagehide', () => {
+    if (!pendingDrop || booked || dropSent) return;
+    dropSent = true;
+    try {
+      const payload = JSON.stringify(Object.assign({}, pendingDrop, {
+        ts: new Date().toISOString(),
+        ua: navigator.userAgent
+      }));
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(DROPOFF_ENDPOINT, new Blob([payload], { type: 'text/plain;charset=utf-8' }));
+      }
+    } catch (_) {}
+  });
+
   // Calendly randevu tamamlandı → Meta Schedule + Yandex hedefi.
   // Lead olayı formun sonunda atıldığı için burada Schedule kullanıyoruz;
   // aksi halde nitelikli kişiler iki kez Lead sayılırdı.
@@ -1524,6 +1554,8 @@
     const ev = e.data && e.data.event;
     if (ev !== 'calendly.event_scheduled' || scheduleSent) return;
     scheduleSent = true;
+    booked = true;
+    pendingDrop = null;
     if (window.ym) try { window.ym(109599095, 'reachGoal', 'mentorluk_randevu'); } catch (_) {}
     if (window.fbq) try {
       window.fbq('track', 'Schedule', { content_name: 'mentorluk-calendly' }, { eventID: 'sch-' + Date.now() + '-' + Math.random().toString(16).slice(2) });
