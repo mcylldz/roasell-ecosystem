@@ -340,6 +340,115 @@
   @media (max-width: 768px) {
     .calendly-host.open { height: 680px; margin: 12px auto 0; }
   }
+  /* ---- Ön eleme formu (çok adımlı) ---- */
+  .funnel-host { display: none; }
+  .funnel-host.open {
+    display: block; width: 100%; max-width: 560px;
+    margin: 24px auto 0; scroll-margin-top: 100px;
+  }
+  .funnel-host.cal-active { max-width: 920px; }
+  .qform {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 26px 24px; text-align: left;
+  }
+  .qform.done-hidden { display: none; }
+
+  .qf-head { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .qf-count {
+    font-family: var(--font-mono); font-size: 0.72rem;
+    letter-spacing: 0.1em; color: var(--text-muted); white-space: nowrap;
+  }
+  .qf-count em { color: var(--gold); font-style: normal; }
+  .qf-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+  .qf-bar span {
+    display: block; height: 100%; width: 33.33%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+    border-radius: 2px; transition: width .35s ease;
+  }
+
+  .qf-step { display: none; }
+  .qf-step.is-active { display: block; animation: qfIn .3s ease both; }
+  @keyframes qfIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .qf-field { margin-bottom: 16px; }
+  .qform label {
+    display: block; font-size: 0.85rem; font-weight: 500;
+    color: var(--text-secondary); margin-bottom: 7px;
+  }
+  .qf-q {
+    font-size: 1.05rem !important; font-weight: 600 !important;
+    color: var(--text-primary) !important; margin-bottom: 16px !important;
+    line-height: 1.4;
+  }
+  .qform input, .qform textarea, .qform select {
+    width: 100%; box-sizing: border-box;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 13px 14px; color: var(--text-primary);
+    font-family: inherit; font-size: 1rem;
+    transition: border-color .18s ease, background .18s ease;
+  }
+  .qform textarea { resize: vertical; min-height: 104px; line-height: 1.5; }
+  .qform input::placeholder, .qform textarea::placeholder { color: rgba(255,255,255,0.3); }
+  .qform input:focus, .qform textarea:focus, .qform select:focus {
+    outline: none; border-color: var(--gold); background: rgba(255,255,255,0.05);
+  }
+  .qform .invalid { border-color: #e06666; }
+
+  .qf-phone { display: flex; gap: 8px; }
+  .qf-phone select {
+    flex: 0 0 128px; padding-right: 8px; cursor: pointer;
+    font-size: 0.92rem;
+  }
+  .qf-phone select option { background: var(--bg-card); color: var(--text-primary); }
+  .qf-phone input { flex: 1; min-width: 0; }
+
+  .qform .btn { width: 100%; margin-top: 6px; }
+  .qform .btn[disabled] { opacity: 0.6; cursor: default; }
+  .qf-back {
+    background: none; border: 0; color: var(--text-muted);
+    font-family: inherit; font-size: 0.85rem; margin-top: 14px;
+    width: 100%; cursor: pointer; transition: color .2s ease;
+  }
+  .qf-back:hover { color: var(--text-secondary); }
+
+  .qf-options { display: grid; gap: 10px; }
+  .qf-opt {
+    width: 100%; text-align: left;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px; color: var(--text-primary);
+    font-family: var(--font-display); font-size: 1rem; font-weight: 500;
+    cursor: pointer; position: relative;
+    transition: border-color .18s ease, background .18s ease, transform .18s ease;
+  }
+  .qf-opt::after {
+    content: '→'; position: absolute; right: 18px; top: 50%;
+    transform: translateY(-50%); color: var(--gold);
+    opacity: 0; transition: opacity .18s ease;
+  }
+  .qf-opt:hover {
+    border-color: var(--gold); background: rgba(201,168,76,0.07);
+    transform: translateX(3px);
+  }
+  .qf-opt:hover::after { opacity: 1; }
+  .qf-opt[disabled] { opacity: 0.5; cursor: default; transform: none; }
+
+  .qf-done { display: none; text-align: center; padding: 14px 0 6px; }
+  .qf-done.is-active { display: block; animation: qfIn .3s ease both; }
+  .qf-done h3 {
+    font-family: var(--font-display); color: var(--gold);
+    font-size: 1.35rem; margin-bottom: 10px;
+  }
+  .qf-done p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.55; }
+  .qf-msg { margin-top: 14px; font-size: 0.92rem; text-align: center; min-height: 1px; }
+  .qf-msg.err { color: #e06666; }
+
+  @media (max-width: 520px) {
+    .qform { padding: 22px 18px; }
+    .qf-phone select { flex: 0 0 108px; font-size: 0.86rem; }
+  }
+
   /* When any host is open, hero collapses its centered min-height
      so the calendar appears right below the button (no extra gap) */
   body.cal-open .hero {
@@ -686,7 +795,80 @@
     <h1 class="reveal">Bahaneler Artık <em class="gold">Geride Kalsın</em></h1>
     <p class="sub reveal reveal-delay-1">8 yıldır Türkiye, Avrupa ve Amerika'da markalar kuruyoruz. Şimdi bu deneyimi <span style="color:var(--text-primary);font-weight:500;">RoaSell Ekosistemi</span> ile seninle paylaşıyoruz.</p>
     <button type="button" class="btn btn-primary cta-open reveal reveal-delay-2" data-cal-target="cal-hero">Ücretsiz Randevu Al →</button>
-    <div id="cal-hero" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-hero" class="funnel-host">
+      <form class="qform" novalidate>
+        <div class="qf-head">
+          <span class="qf-count">Adım <em class="qf-now">1</em>/3</span>
+          <div class="qf-bar"><span></span></div>
+        </div>
+
+        <div class="qf-step is-active" data-step="1">
+          <div class="qf-field">
+            <label>Ad Soyad</label>
+            <input type="text" name="name" placeholder="Adınız ve soyadınız" autocomplete="name" />
+          </div>
+          <div class="qf-field">
+            <label>Telefon</label>
+            <div class="qf-phone">
+              <select name="dial" aria-label="Ülke kodu">
+            <option value="+90" selected>+90 Türkiye</option>
+            <option value="+49">+49 Almanya</option>
+            <option value="+31">+31 Hollanda</option>
+            <option value="+32">+32 Belçika</option>
+            <option value="+43">+43 Avusturya</option>
+            <option value="+41">+41 İsviçre</option>
+            <option value="+44">+44 İngiltere</option>
+            <option value="+33">+33 Fransa</option>
+            <option value="+1">+1 ABD / Kanada</option>
+            <option value="+994">+994 Azerbaycan</option>
+            <option value="+7">+7 Rusya / Kazakistan</option>
+            <option value="+971">+971 BAE</option>
+            <option value="+966">+966 S. Arabistan</option>
+            <option value="+39">+39 İtalya</option>
+            <option value="+34">+34 İspanya</option>
+            <option value="+46">+46 İsveç</option>
+            <option value="+45">+45 Danimarka</option>
+            <option value="+47">+47 Norveç</option>
+            <option value="+380">+380 Ukrayna</option>
+            <option value="+998">+998 Özbekistan</option>
+              </select>
+              <input type="tel" name="phone" placeholder="5XX XXX XX XX" autocomplete="tel" />
+            </div>
+          </div>
+          <div class="qf-field">
+            <label>E-posta</label>
+            <input type="email" name="email" placeholder="ornek@mail.com" autocomplete="email" />
+          </div>
+          <button type="button" class="btn btn-primary qf-next">Devam Et →</button>
+        </div>
+
+        <div class="qf-step" data-step="2">
+          <label class="qf-q">Daha önce hiç e-ticaret yaptınız mı?</label>
+          <textarea name="experience" rows="4" placeholder="Deneyiminizi kısaca anlatın — hiç yapmadıysanız da yazabilirsiniz."></textarea>
+          <button type="button" class="btn btn-primary qf-next">Devam Et →</button>
+          <button type="button" class="qf-back">← Geri</button>
+        </div>
+
+        <div class="qf-step" data-step="3">
+          <label class="qf-q">Bu işe ne kadar bütçe ayırabilirsiniz?</label>
+          <div class="qf-options">
+          <button type="button" class="qf-opt" data-value="500$-1000$">500$ – 1000$</button>
+          <button type="button" class="qf-opt" data-value="1000$-2000$">1000$ – 2000$</button>
+          <button type="button" class="qf-opt" data-value="2000$-3000$">2000$ – 3000$</button>
+          <button type="button" class="qf-opt" data-value="3000$+">3000$ +</button>
+          </div>
+          <button type="button" class="qf-back">← Geri</button>
+        </div>
+
+        <div class="qf-done">
+          <h3>Teşekkürler! 🎉</h3>
+          <p>Bilgileriniz bize ulaştı. Ekibimiz en kısa sürede sizi arayacak.</p>
+        </div>
+
+        <div class="qf-msg" aria-live="polite"></div>
+      </form>
+      <div class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    </div>
   </div>
 </section>
 
@@ -756,7 +938,80 @@
         </div>
       </div>
     </div>
-    <div id="cal-calc" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-calc" class="funnel-host">
+      <form class="qform" novalidate>
+        <div class="qf-head">
+          <span class="qf-count">Adım <em class="qf-now">1</em>/3</span>
+          <div class="qf-bar"><span></span></div>
+        </div>
+
+        <div class="qf-step is-active" data-step="1">
+          <div class="qf-field">
+            <label>Ad Soyad</label>
+            <input type="text" name="name" placeholder="Adınız ve soyadınız" autocomplete="name" />
+          </div>
+          <div class="qf-field">
+            <label>Telefon</label>
+            <div class="qf-phone">
+              <select name="dial" aria-label="Ülke kodu">
+            <option value="+90" selected>+90 Türkiye</option>
+            <option value="+49">+49 Almanya</option>
+            <option value="+31">+31 Hollanda</option>
+            <option value="+32">+32 Belçika</option>
+            <option value="+43">+43 Avusturya</option>
+            <option value="+41">+41 İsviçre</option>
+            <option value="+44">+44 İngiltere</option>
+            <option value="+33">+33 Fransa</option>
+            <option value="+1">+1 ABD / Kanada</option>
+            <option value="+994">+994 Azerbaycan</option>
+            <option value="+7">+7 Rusya / Kazakistan</option>
+            <option value="+971">+971 BAE</option>
+            <option value="+966">+966 S. Arabistan</option>
+            <option value="+39">+39 İtalya</option>
+            <option value="+34">+34 İspanya</option>
+            <option value="+46">+46 İsveç</option>
+            <option value="+45">+45 Danimarka</option>
+            <option value="+47">+47 Norveç</option>
+            <option value="+380">+380 Ukrayna</option>
+            <option value="+998">+998 Özbekistan</option>
+              </select>
+              <input type="tel" name="phone" placeholder="5XX XXX XX XX" autocomplete="tel" />
+            </div>
+          </div>
+          <div class="qf-field">
+            <label>E-posta</label>
+            <input type="email" name="email" placeholder="ornek@mail.com" autocomplete="email" />
+          </div>
+          <button type="button" class="btn btn-primary qf-next">Devam Et →</button>
+        </div>
+
+        <div class="qf-step" data-step="2">
+          <label class="qf-q">Daha önce hiç e-ticaret yaptınız mı?</label>
+          <textarea name="experience" rows="4" placeholder="Deneyiminizi kısaca anlatın — hiç yapmadıysanız da yazabilirsiniz."></textarea>
+          <button type="button" class="btn btn-primary qf-next">Devam Et →</button>
+          <button type="button" class="qf-back">← Geri</button>
+        </div>
+
+        <div class="qf-step" data-step="3">
+          <label class="qf-q">Bu işe ne kadar bütçe ayırabilirsiniz?</label>
+          <div class="qf-options">
+          <button type="button" class="qf-opt" data-value="500$-1000$">500$ – 1000$</button>
+          <button type="button" class="qf-opt" data-value="1000$-2000$">1000$ – 2000$</button>
+          <button type="button" class="qf-opt" data-value="2000$-3000$">2000$ – 3000$</button>
+          <button type="button" class="qf-opt" data-value="3000$+">3000$ +</button>
+          </div>
+          <button type="button" class="qf-back">← Geri</button>
+        </div>
+
+        <div class="qf-done">
+          <h3>Teşekkürler! 🎉</h3>
+          <p>Bilgileriniz bize ulaştı. Ekibimiz en kısa sürede sizi arayacak.</p>
+        </div>
+
+        <div class="qf-msg" aria-live="polite"></div>
+      </form>
+      <div class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    </div>
   </div>
 </section>
 
@@ -924,7 +1179,80 @@
     <p class="sub reveal reveal-delay-1">30 dakikalık ücretsiz görüşme — tek bir 30 dakikalık görüşme sana bir anda çok şey kazandırır mı bilmiyoruz ama kaybettirmeyeceği kesin.</p>
     <button type="button" class="btn btn-primary large cta-open reveal reveal-delay-2" data-cal-target="cal-final">Hemen Görüşme Al →</button>
     <div class="urgency reveal reveal-delay-3"><span class="mark">●</span>Kontenjan sınırlıdır — Her hafta sadece belirli sayıda görüşme yapılıyor</div>
-    <div id="cal-final" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-final" class="funnel-host">
+      <form class="qform" novalidate>
+        <div class="qf-head">
+          <span class="qf-count">Adım <em class="qf-now">1</em>/3</span>
+          <div class="qf-bar"><span></span></div>
+        </div>
+
+        <div class="qf-step is-active" data-step="1">
+          <div class="qf-field">
+            <label>Ad Soyad</label>
+            <input type="text" name="name" placeholder="Adınız ve soyadınız" autocomplete="name" />
+          </div>
+          <div class="qf-field">
+            <label>Telefon</label>
+            <div class="qf-phone">
+              <select name="dial" aria-label="Ülke kodu">
+            <option value="+90" selected>+90 Türkiye</option>
+            <option value="+49">+49 Almanya</option>
+            <option value="+31">+31 Hollanda</option>
+            <option value="+32">+32 Belçika</option>
+            <option value="+43">+43 Avusturya</option>
+            <option value="+41">+41 İsviçre</option>
+            <option value="+44">+44 İngiltere</option>
+            <option value="+33">+33 Fransa</option>
+            <option value="+1">+1 ABD / Kanada</option>
+            <option value="+994">+994 Azerbaycan</option>
+            <option value="+7">+7 Rusya / Kazakistan</option>
+            <option value="+971">+971 BAE</option>
+            <option value="+966">+966 S. Arabistan</option>
+            <option value="+39">+39 İtalya</option>
+            <option value="+34">+34 İspanya</option>
+            <option value="+46">+46 İsveç</option>
+            <option value="+45">+45 Danimarka</option>
+            <option value="+47">+47 Norveç</option>
+            <option value="+380">+380 Ukrayna</option>
+            <option value="+998">+998 Özbekistan</option>
+              </select>
+              <input type="tel" name="phone" placeholder="5XX XXX XX XX" autocomplete="tel" />
+            </div>
+          </div>
+          <div class="qf-field">
+            <label>E-posta</label>
+            <input type="email" name="email" placeholder="ornek@mail.com" autocomplete="email" />
+          </div>
+          <button type="button" class="btn btn-primary qf-next">Devam Et →</button>
+        </div>
+
+        <div class="qf-step" data-step="2">
+          <label class="qf-q">Daha önce hiç e-ticaret yaptınız mı?</label>
+          <textarea name="experience" rows="4" placeholder="Deneyiminizi kısaca anlatın — hiç yapmadıysanız da yazabilirsiniz."></textarea>
+          <button type="button" class="btn btn-primary qf-next">Devam Et →</button>
+          <button type="button" class="qf-back">← Geri</button>
+        </div>
+
+        <div class="qf-step" data-step="3">
+          <label class="qf-q">Bu işe ne kadar bütçe ayırabilirsiniz?</label>
+          <div class="qf-options">
+          <button type="button" class="qf-opt" data-value="500$-1000$">500$ – 1000$</button>
+          <button type="button" class="qf-opt" data-value="1000$-2000$">1000$ – 2000$</button>
+          <button type="button" class="qf-opt" data-value="2000$-3000$">2000$ – 3000$</button>
+          <button type="button" class="qf-opt" data-value="3000$+">3000$ +</button>
+          </div>
+          <button type="button" class="qf-back">← Geri</button>
+        </div>
+
+        <div class="qf-done">
+          <h3>Teşekkürler! 🎉</h3>
+          <p>Bilgileriniz bize ulaştı. Ekibimiz en kısa sürede sizi arayacak.</p>
+        </div>
+
+        <div class="qf-msg" aria-live="polite"></div>
+      </form>
+      <div class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    </div>
   </div>
 </section>
 
@@ -1094,43 +1422,186 @@
       }
     }, 80);
   });
-  const openCal = async (id) => {
+  // Ön eleme formu — CTA'ya basınca Calendly yerine önce bu form açılır.
+  // 3 adım: iletişim → e-ticaret deneyimi → bütçe. Bütçe seçimi akışı bitirir:
+  // 3000$+ ise Calendly takvimi açılır, diğerlerinde teşekkür mesajı gösterilir.
+  // Her iki durumda da tüm cevaplar Google Sheets'e yazılır.
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzLQ6dGzgZd2sAhwBM3YupJkrM1qxpuVV5BM_p4uVwuDOzplLyOkEES9D77MKiHmrtteA/exec';
+  const QUALIFIED = '3000$+';
+
+  const openFunnel = (id) => {
     const host = document.getElementById(id);
     if (!host) return;
-    if (host.dataset.opened === '1') {
+    if (!host.classList.contains('open')) {
+      host.classList.add('open');
+      document.body.classList.add('cal-open');
+    }
+    setTimeout(() => {
       host.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
-    }
-    // Open host immediately so the calendar appears right under the button
-    host.classList.add('open');
-    document.body.classList.add('cal-open');
-    try {
-      await waitForCalendly();
-      window.Calendly.initInlineWidget({ url: host.dataset.calendlyUrl, parentElement: host });
-      host.dataset.opened = '1';
-    } catch (err) {
-      host.innerHTML = '<div class="cal-loading">Takvim yüklenemedi.<a class="err-link" href="' + fallbackUrl + '" target="_blank" rel="noopener">Calendly\'de aç</a></div>';
-    }
-    setTimeout(() => host.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+      const first = host.querySelector('.qf-step.is-active input, .qf-step.is-active textarea');
+      if (first) first.focus({ preventScroll: true });
+    }, 80);
   };
   document.querySelectorAll('[data-cal-target]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      openCal(btn.dataset.calTarget);
+      openFunnel(btn.dataset.calTarget);
     });
   });
 
-  // Calendly randevu tamamlandı → Meta Lead + Yandex hedefi
-  let leadSent = false;
+  const openCalendar = async (host, lead) => {
+    const mount = host.querySelector('.calendly-host');
+    if (!mount) return;
+    host.classList.add('cal-active');
+    mount.classList.add('open');
+    try {
+      await waitForCalendly();
+      let url = mount.dataset.calendlyUrl;
+      // Ad ve e-posta önceden dolu gelsin — randevu adımında tekrar sormasın
+      if (lead && lead.name) url += '&name=' + encodeURIComponent(lead.name);
+      if (lead && lead.email) url += '&email=' + encodeURIComponent(lead.email);
+      window.Calendly.initInlineWidget({ url: url, parentElement: mount });
+    } catch (err) {
+      mount.innerHTML = '<div class="cal-loading">Takvim yüklenemedi.<a class="err-link" href="'
+        + fallbackUrl + '" target="_blank" rel="noopener">Calendly\'de aç</a></div>';
+    }
+    setTimeout(() => mount.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+  };
+
+  const emailOk = (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+  const phoneOk = (v) => v.replace(/\D/g, '').length >= 7;
+
+  document.querySelectorAll('.qform').forEach(form => {
+    const host = form.closest('.funnel-host');
+    const steps = Array.from(form.querySelectorAll('.qf-step'));
+    const done = form.querySelector('.qf-done');
+    const msg = form.querySelector('.qf-msg');
+    const bar = form.querySelector('.qf-bar span');
+    const now = form.querySelector('.qf-now');
+    let step = 1;
+
+    const render = () => {
+      steps.forEach(s => s.classList.toggle('is-active', Number(s.dataset.step) === step));
+      if (bar) bar.style.width = (step / steps.length * 100) + '%';
+      if (now) now.textContent = String(step);
+      msg.className = 'qf-msg'; msg.textContent = '';
+      // Form kapalıyken odak çalmasın; sadece kullanıcı açtıysa odakla
+      if (host && host.classList.contains('open')) {
+        const focusable = form.querySelector('.qf-step.is-active input, .qf-step.is-active textarea');
+        if (focusable) focusable.focus({ preventScroll: true });
+      }
+    };
+
+    const fail = (field, text) => {
+      if (field) { field.classList.add('invalid'); field.focus({ preventScroll: true }); }
+      msg.className = 'qf-msg err';
+      msg.textContent = text;
+      return false;
+    };
+
+    const validate = () => {
+      form.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+      if (step === 1) {
+        if (!form.name.value.trim()) return fail(form.name, 'Lütfen ad ve soyadınızı girin.');
+        if (!phoneOk(form.phone.value)) return fail(form.phone, 'Lütfen geçerli bir telefon numarası girin.');
+        if (!emailOk(form.email.value.trim())) return fail(form.email, 'Lütfen geçerli bir e-posta adresi girin.');
+      }
+      if (step === 2 && !form.experience.value.trim()) {
+        return fail(form.experience, 'Lütfen bu soruyu yanıtlayın.');
+      }
+      return true;
+    };
+
+    form.querySelectorAll('.qf-next').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!validate()) return;
+        step = Math.min(step + 1, steps.length);
+        render();
+      });
+    });
+    form.querySelectorAll('.qf-back').forEach(btn => {
+      btn.addEventListener('click', () => { step = Math.max(step - 1, 1); render(); });
+    });
+    form.addEventListener('submit', (e) => e.preventDefault());
+    // Enter tuşu adımı ilerletsin (textarea hariç — orada satır atlaması gerekir)
+    form.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.target.tagName === 'TEXTAREA') return;
+      const next = form.querySelector('.qf-step.is-active .qf-next');
+      if (!next) return;
+      e.preventDefault();
+      next.click();
+    });
+
+    form.querySelectorAll('.qf-opt').forEach(opt => {
+      opt.addEventListener('click', async () => {
+        const budget = opt.dataset.value;
+        form.querySelectorAll('.qf-opt').forEach(o => { o.disabled = true; });
+        msg.className = 'qf-msg'; msg.textContent = 'Kaydediliyor…';
+
+        const lead = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          phone: form.dial.value + ' ' + form.phone.value.trim(),
+          experience: form.experience.value.trim(),
+          budget: budget
+        };
+
+        // Dönüşümü kayıt isteğinden önce bildir — ağ hatası olayı yutmasın
+        if (!form.dataset.tracked) {
+          form.dataset.tracked = '1';
+          if (window.ym) try { window.ym(109599095, 'reachGoal', 'mentorluk_form'); } catch (_) {}
+          if (window.fbq) try {
+            window.fbq('track', 'Lead', { content_name: 'mentorluk-form' },
+              { eventID: 'lead-' + Date.now() + '-' + Math.random().toString(16).slice(2) });
+          } catch (_) {}
+        }
+
+        try {
+          // text/plain → Apps Script'te CORS preflight tetiklemez
+          await fetch(FORM_ENDPOINT, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(Object.assign({}, lead, {
+              page: 'mentorluk',
+              ts: new Date().toISOString(),
+              ua: navigator.userAgent
+            }))
+          });
+        } catch (_) {
+          // no-cors yanıtı okunamaz; ağ hatasında da akışa devam ediyoruz ki
+          // kullanıcı formun başına dönmesin
+        }
+
+        msg.className = 'qf-msg'; msg.textContent = '';
+        steps.forEach(s => s.classList.remove('is-active'));
+        if (bar) bar.style.width = '100%';
+
+        if (budget === QUALIFIED) {
+          form.classList.add('done-hidden');
+          openCalendar(host, lead);
+        } else {
+          done.classList.add('is-active');
+        }
+      });
+    });
+
+    render();
+  });
+
+  // Calendly randevu tamamlandı → Meta Schedule + Yandex hedefi.
+  // Lead olayı formun sonunda atıldığı için burada Schedule kullanıyoruz;
+  // aksi halde nitelikli kişiler iki kez Lead sayılırdı.
+  let scheduleSent = false;
   window.addEventListener('message', (e) => {
     if (!/calendly\.com$/.test((() => { try { return new URL(e.origin).hostname; } catch (_) { return ''; } })())) return;
     const ev = e.data && e.data.event;
-    if (ev !== 'calendly.event_scheduled' || leadSent) return;
-    leadSent = true;
+    if (ev !== 'calendly.event_scheduled' || scheduleSent) return;
+    scheduleSent = true;
     if (window.ym) try { window.ym(109599095, 'reachGoal', 'mentorluk_randevu'); } catch (_) {}
     if (window.fbq) try {
-      window.fbq('track', 'Lead', { content_name: 'mentorluk-calendly' }, { eventID: 'lead-' + Date.now() + '-' + Math.random().toString(16).slice(2) });
+      window.fbq('track', 'Schedule', { content_name: 'mentorluk-calendly' }, { eventID: 'sch-' + Date.now() + '-' + Math.random().toString(16).slice(2) });
     } catch (_) {}
   });
 </script>
