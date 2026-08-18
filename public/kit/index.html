@@ -1355,7 +1355,8 @@
 
   // Randevu formu — butona basınca formu aç, gönderince Google Sheets'e yaz
   // NOT: Apps Script "Web App" deploy URL'inizi buraya yapıştırın (/exec ile biten).
-  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzLQ6dGzgZd2sAhwBM3YupJkrM1qxpuVV5BM_p4uVwuDOzplLyOkEES9D77MKiHmrtteA/exec';
+  // Kit'e ait ayrı tablo — Randevular sheet'inden bağımsız
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzJcezTpwgIjDCFS_QFd9APOg7QFYSaKxx71EsEZmPqhN6TaRFAabDV5SV-aTNYl3fDyA/exec';
 
   const openForm = (id) => {
     const host = document.getElementById(id);
@@ -1468,8 +1469,10 @@
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
+            tab: 'form',
             name, email, phone,
             page: 'kit',
+            status: 'randevu talebi',
             ts: new Date().toISOString(),
             ua: navigator.userAgent
           })
