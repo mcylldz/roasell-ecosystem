@@ -1345,7 +1345,8 @@
   // 3 adım: iletişim → e-ticaret deneyimi → bütçe. Bütçe seçimi akışı bitirir:
   // 3000$+ ise Calendly takvimi açılır (sheet'e yazılmaz, randevu akışına girer),
   // diğerlerinde cevaplar Google Sheets'e yazılıp teşekkür mesajı gösterilir.
-  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzLQ6dGzgZd2sAhwBM3YupJkrM1qxpuVV5BM_p4uVwuDOzplLyOkEES9D77MKiHmrtteA/exec';
+  // Roasell Leads tablosu → Kayitlar sayfası (randevu sayfaları ayrı tabloda)
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxnuHWit73LlDNLZxGem2zsiWc2US46cOjYh1OC8UCHdCN1lr44-vFqib_dlJYoL_3Vww/exec';
   // Randevu almadan ayrılan 3000$+ kişiler buraya yazılır. Ayrı bir Apps Script
   // deploy URL'si verilirse bu sabiti değiştirmek yeterli.
   const DROPOFF_ENDPOINT = FORM_ENDPOINT;
