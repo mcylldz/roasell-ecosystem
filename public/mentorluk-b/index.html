@@ -164,6 +164,20 @@
   }
 
   /* Hero video (A/B varyantı) */
+  /* Randevu kilidi — tanıtım videosu sonuna kadar izlenmeden randevu butonları açılmaz */
+  .btn.is-locked { opacity: .5; cursor: not-allowed; animation: none; transform: none; filter: grayscale(.35); }
+  .btn-primary.is-locked:hover { background: var(--gold); transform: none; }
+  .btn-ghost.is-locked:hover { background: transparent; color: var(--gold); border-color: var(--gold); }
+  .btn.is-locked::before { content: '🔒'; margin-right: 8px; font-size: .9em; }
+  .gate-note { max-width: 560px; margin: 14px auto 0; font-size: .86rem; line-height: 1.5; color: var(--text-secondary); text-align: center; }
+  .gate-note b { color: var(--text-primary); font-weight: 600; }
+  .gate-note .gate-bar { display: block; height: 4px; margin: 10px auto 0; max-width: 260px; border-radius: 4px; background: rgba(255,255,255,.08); overflow: hidden; }
+  .gate-note .gate-bar i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .4s ease; }
+  .gate-note.open { color: var(--gold-light); }
+  .gate-note:empty { display: none; }
+  .gate-note.nudge { animation: gate-nudge .5s ease; color: var(--gold-light); }
+  @keyframes gate-nudge { 0%, 100% { transform: none; } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .hero-video.gate-flash { box-shadow: 0 0 0 4px var(--gold), 0 0 60px rgba(201,168,76,.45); }
   .hero-video {
     width: 100%; max-width: 760px;
     margin: 0 auto 36px;
@@ -1152,6 +1166,86 @@
   };
   initVideoUnmute();
 
+  // Randevu kilidi — tanıtım videosu (1218901671) sonuna kadar izlenmeden randevu butonları açılmaz.
+  // Yalnızca gerçekten oynatılan süre sayılır (ileri sarma sayılmaz); %95 izlenince açılır ve
+  // bu tarayıcıda hatırlanır. Oynatıcı yüklenemezse ziyaretçi kilitli kalmasın diye kilit kalkar.
+  const GATE_KEY = 'roasell_tanitim_izlendi_1218901671';
+  const gateStore = {
+    get() { try { return localStorage.getItem(GATE_KEY) === '1'; } catch (_) { return false; } },
+    set() { try { localStorage.setItem(GATE_KEY, '1'); } catch (_) {} },
+  };
+  let gateOpen = gateStore.get();
+  const gateBtns = [...document.querySelectorAll('[data-cal-target]')];
+  const gateNotes = [];
+  const heroCta = document.querySelector('.hero [data-cal-target].btn-primary');
+  gateBtns.forEach(btn => {
+    if (!btn.classList.contains('btn-primary')) return;
+    const note = document.createElement('p');
+    note.className = 'gate-note';
+    btn.insertAdjacentElement('afterend', note);
+    gateNotes.push({ note, hero: btn === heroCta });
+  });
+  const renderGate = (pct = 0) => {
+    gateBtns.forEach(btn => {
+      btn.classList.toggle('is-locked', !gateOpen);
+      if (gateOpen) btn.removeAttribute('aria-disabled'); else btn.setAttribute('aria-disabled', 'true');
+    });
+    gateNotes.forEach(({ note, hero }) => {
+      note.classList.toggle('open', gateOpen);
+      if (gateOpen) { note.innerHTML = hero ? '✓ Videoyu izledin, <b>randevu butonu açıldı.</b>' : ''; return; }
+      note.innerHTML = hero
+        ? 'Ücretsiz randevu butonu, yukarıdaki <b>tanıtım videosunu sonuna kadar izledikten sonra</b> açılır.<span class="gate-bar"><i style="width:' + pct + '%"></i></span>'
+        : 'Randevu almak için önce sayfanın başındaki <b>tanıtım videosunu</b> sonuna kadar izle.';
+    });
+  };
+  renderGate();
+  // Kilitliyken butona basılırsa takvim/form açılmaz; ziyaretçi videoya yönlendirilir
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-cal-target]');
+    if (!btn || gateOpen) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const video = document.querySelector('.hero-video');
+    if (video) {
+      video.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      video.classList.add('gate-flash');
+      setTimeout(() => video.classList.remove('gate-flash'), 1400);
+    }
+    gateNotes.forEach(({ note }) => { note.classList.remove('nudge'); void note.offsetWidth; note.classList.add('nudge'); });
+  }, true);
+  const unlockGate = () => {
+    if (gateOpen) return;
+    gateOpen = true;
+    gateStore.set();
+    renderGate();
+    if (window.ym) try { window.ym(109599095, 'reachGoal', 'tanitim_video_tamam'); } catch (_) {}
+    if (heroCta) heroCta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+  // Oynatıcıya bağlanır: gerçekten izlenen saniyeleri sayar
+  const watchHeroVideo = (iframe) => {
+    if (gateOpen) return;
+    if (!window.Vimeo || !window.Vimeo.Player) { unlockGate(); return; }
+    let player;
+    try { player = new window.Vimeo.Player(iframe); } catch (_) { unlockGate(); return; }
+    // Oynatıcı 15 sn içinde hazır olmazsa (Vimeo engeli, ağ sorunu) ziyaretçi kilitli kalmasın
+    const readyTimer = setTimeout(unlockGate, 15000);
+    player.ready().then(() => clearTimeout(readyTimer)).catch(() => {});
+    let watched = 0, last = null, duration = 0;
+    player.getDuration().then(d => { duration = d; }).catch(() => {});
+    player.on('timeupdate', (d) => {
+      duration = d.duration || duration;
+      if (last !== null) { const step = d.seconds - last; if (step > 0 && step < 1.5) watched += step; }
+      last = d.seconds;
+      if (!duration) return;
+      const bar = document.querySelector('.gate-note .gate-bar i');
+      if (bar) bar.style.width = Math.min(100, Math.round(watched / duration * 100)) + '%';
+      if (watched >= duration * 0.95) unlockGate();
+    });
+    player.on('seeked', (d) => { last = d.seconds; });
+    player.on('ended', () => { if (duration && watched >= duration * 0.9) unlockGate(); });
+    player.on('error', () => unlockGate());
+  };
+
   // Hero videosu — thumbnail'e tıklanınca Vimeo oynatıcı yüklenip sesli başlar.
   // Oynatıcıyı açılışta yüklemediğimiz için sayfa belirgin şekilde hızlı açılıyor.
   const heroPoster = document.querySelector('.hv-poster');
@@ -1166,6 +1260,7 @@
       iframe.setAttribute('title', 'Funnel');
       frame.appendChild(iframe);
       heroPoster.replaceWith(frame);
+      watchHeroVideo(iframe);
     });
   }
 
