@@ -771,7 +771,7 @@
       </button>
     </div>
     <button type="button" class="btn btn-primary cta-open reveal reveal-delay-2" data-cal-target="cal-hero">Ücretsiz Randevu Al →</button>
-    <div id="cal-hero" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-hero" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c&amp;utm_source=roasell-lp&amp;utm_medium=video&amp;utm_campaign=mentorluk-b-videolu"></div>
   </div>
 </section>
 
@@ -841,7 +841,7 @@
         </div>
       </div>
     </div>
-    <div id="cal-calc" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-calc" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c&amp;utm_source=roasell-lp&amp;utm_medium=video&amp;utm_campaign=mentorluk-b-videolu"></div>
   </div>
 </section>
 
@@ -1009,7 +1009,7 @@
     <p class="sub reveal reveal-delay-1">30 dakikalık ücretsiz görüşme — tek bir 30 dakikalık görüşme sana bir anda çok şey kazandırır mı bilmiyoruz ama kaybettirmeyeceği kesin.</p>
     <button type="button" class="btn btn-primary large cta-open reveal reveal-delay-2" data-cal-target="cal-final">Hemen Görüşme Al →</button>
     <div class="urgency reveal reveal-delay-3"><span class="mark">●</span>Kontenjan sınırlıdır — Her hafta sadece belirli sayıda görüşme yapılıyor</div>
-    <div id="cal-final" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c"></div>
+    <div id="cal-final" class="calendly-host" data-calendly-url="https://calendly.com/roasell/roasell-analiz-gorusmesi?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=000000&amp;text_color=ffffff&amp;primary_color=c9a84c&amp;utm_source=roasell-lp&amp;utm_medium=video&amp;utm_campaign=mentorluk-b-videolu"></div>
   </div>
 </section>
 
@@ -1265,7 +1265,7 @@
   }
 
   // Calendly inline embed — anında aç, gecikme/spinner yok
-  const fallbackUrl = 'https://calendly.com/roasell/roasell-analiz-gorusmesi';
+  const fallbackUrl = 'https://calendly.com/roasell/roasell-analiz-gorusmesi?utm_source=roasell-lp&utm_medium=video&utm_campaign=mentorluk-b-videolu';
   const waitForCalendly = (timeoutMs = 8000) => new Promise((resolve, reject) => {
     if (window.Calendly && typeof window.Calendly.initInlineWidget === 'function') return resolve();
     const start = performance.now();
@@ -1304,6 +1304,9 @@
     });
   });
 
+  // Roasell Leads tablosu (mentorluk sayfasıyla aynı Apps Script ucu)
+  const LEAD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxnuHWit73LlDNLZxGem2zsiWc2US46cOjYh1OC8UCHdCN1lr44-vFqib_dlJYoL_3Vww/exec';
+
   // Calendly randevu tamamlandı → Meta Lead + Yandex hedefi
   let leadSent = false;
   window.addEventListener('message', (e) => {
@@ -1314,6 +1317,24 @@
     if (window.ym) try { window.ym(109599095, 'reachGoal', 'mentorluk_randevu'); } catch (_) {}
     if (window.fbq) try {
       window.fbq('track', 'Lead', { content_name: 'mentorluk-calendly' }, { eventID: 'lead-' + Date.now() + '-' + Math.random().toString(16).slice(2) });
+    } catch (_) {}
+    // Roasell Leads tablosuna "videolu sayfadan randevu alındı" satırı düşür.
+    // Ad/e-posta/telefon Calendly'de kalır; buraya yalnızca kaynak ve zaman yazılır.
+    try {
+      const p = (e.data && e.data.payload) || {};
+      fetch(LEAD_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          name: '(Calendly kaydında)', email: '(Calendly kaydında)', phone: '',
+          page: 'mentorluk-b-videolu',
+          status: 'randevu alındı (Calendly)',
+          calendly: (p.invitee && p.invitee.uri) || (p.event && p.event.uri) || '',
+          ts: new Date().toISOString(),
+          ua: navigator.userAgent
+        })
+      }).catch(() => {});
     } catch (_) {}
   });
 </script>
